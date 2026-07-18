@@ -88,7 +88,8 @@ window.WEDDING_CONFIG = {
 
   // URL Web App Google Apps Script untuk RSVP & ucapan.
   // Kosongkan dulu; isi setelah setup (lihat README.md bagian "Setup RSVP").
-  appsScriptUrl: "",
+  appsScriptUrl:
+    "https://script.google.com/macros/s/AKfycbzkQVshxLqWLdxb7A_Nu7HPDt4DAW0htnmfuKA1okQ6bwrxcOleXI5oxUmTgcKwylD3/exec",
 
   // Kutipan pembuka & penutup
   quote: {
