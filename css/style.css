@@ -728,6 +728,199 @@ body {
 }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
+/* ============================================================
+   LAPISAN SINEMATIK (GSAP) — hanya aktif saat body.gsap-on
+   ============================================================ */
+
+/* GSAP mengambil alih entrance; matikan animasi CSS slide */
+body.gsap-on .swiper-slide .anim {
+  opacity: 1;
+  animation: none;
+}
+
+/* ---------- Cover: tirai emas ---------- */
+
+body.gsap-on .cover { background: none; }
+
+.cover-panel {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50.5%;
+  z-index: 0;
+  will-change: transform;
+  background:
+    radial-gradient(ellipse 130% 60% at 50% 0%, rgba(4, 106, 56, 0.6), transparent 55%),
+    radial-gradient(ellipse 130% 60% at 50% 100%, rgba(4, 106, 56, 0.45), transparent 55%),
+    linear-gradient(180deg, var(--emerald-800), var(--emerald-950));
+  background-size: 200% 100%;
+}
+.cover-panel-left { left: 0; background-position: 0% 0%; }
+.cover-panel-right { right: 0; background-position: 100% 0%; }
+.cover-panel-left::after,
+.cover-panel-right::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, var(--gold-border) 30%, var(--gold-border) 70%, transparent);
+}
+.cover-panel-left::after { right: 0; }
+.cover-panel-right::after { left: 0; }
+
+.cover-sweep {
+  position: absolute;
+  top: -15%;
+  bottom: -15%;
+  left: 10%;
+  width: 55%;
+  z-index: 5;
+  transform: skewX(-16deg) translateX(-150%);
+  background: linear-gradient(90deg, transparent, rgba(243, 229, 171, 0.32), transparent);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.cover-frame { z-index: 2; }
+.cover-inner { position: relative; z-index: 3; }
+
+/* ---------- Kata dekoratif raksasa di belakang tiap slide ---------- */
+
+.slide-decor {
+  position: absolute;
+  top: 6%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: var(--font-script);
+  font-size: clamp(4.5rem, 26vw, 7rem);
+  line-height: 1;
+  color: var(--gold);
+  opacity: 0.07;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 0;
+}
+.slide-inner { position: relative; z-index: 1; }
+
+/* ---------- Layer ambient: daun emas + light ray ---------- */
+
+.ambient {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.leaf {
+  position: absolute;
+  width: clamp(90px, 26vw, 130px);
+  opacity: 0.45;
+  will-change: transform;
+}
+.leaf-1 { left: -20px; bottom: 5%; }
+.leaf-2 { right: -18px; top: 7%; }
+.leaf-3 { left: -12px; top: 3%; width: clamp(64px, 18vw, 92px); opacity: 0.3; }
+
+.light-ray {
+  position: absolute;
+  top: -20%;
+  bottom: -20%;
+  left: -10%;
+  width: 45%;
+  background: linear-gradient(90deg, transparent, rgba(243, 229, 171, 0.13), transparent);
+  mix-blend-mode: screen;
+  transform: skewX(-18deg) translateX(-150%);
+  animation: raySweep 13s ease-in-out infinite;
+}
+@keyframes raySweep {
+  0%, 70% { transform: skewX(-18deg) translateX(-150%); }
+  88%, 100% { transform: skewX(-18deg) translateX(330%); }
+}
+
+/* ---------- Monogram SVG (menggambar diri) ---------- */
+
+.monogram-svg {
+  width: clamp(104px, 28vw, 122px);
+  overflow: visible;
+}
+.mono-text {
+  font-family: var(--font-serif);
+  font-size: 32px;
+  letter-spacing: 3px;
+  fill: var(--gold);
+}
+.mono-amp {
+  font-family: var(--font-script);
+  font-size: 20px;
+  fill: var(--gold-light);
+}
+
+/* ---------- Background swiper bergeser saat scroll ---------- */
+
+.swiper {
+  background: linear-gradient(180deg,
+    #0e4a37 0%, #0b3d2e 16%, #093c44 36%,
+    #061f17 54%, #0c4030 74%, #04140f 100%);
+  background-size: 100% 850%;
+  background-position: 50% 0%;
+}
+.swiper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(ellipse 120% 60% at 50% 0%, rgba(4, 106, 56, 0.3), transparent 60%);
+  pointer-events: none;
+}
+
+/* ---------- Flip angka countdown ---------- */
+
+.count-box { perspective: 320px; }
+.count-box span {
+  display: block;
+  width: 100%;
+  text-align: center;
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+/* ---------- Sheen kartu amplop ---------- */
+
+.gift-card {
+  position: relative;
+  overflow: hidden;
+}
+.gift-card::after {
+  content: "";
+  position: absolute;
+  top: -30%;
+  bottom: -30%;
+  left: 0;
+  width: 38%;
+  transform: skewX(-20deg) translateX(-180%);
+  background: linear-gradient(90deg, transparent, rgba(243, 229, 171, 0.26), transparent);
+  pointer-events: none;
+}
+body.gsap-on .slide-gift.swiper-slide-active .gift-card::after {
+  animation: sheen 1.4s 1s ease-in-out both;
+}
+body.gsap-on .slide-gift.swiper-slide-active .gift-card:nth-child(2)::after {
+  animation-delay: 1.3s;
+}
+@keyframes sheen {
+  from { transform: skewX(-20deg) translateX(-180%); }
+  to { transform: skewX(-20deg) translateX(480%); }
+}
+
+/* ---------- Bullet pagination spring ---------- */
+
+.swiper-pagination-bullet {
+  transition: all 0.5s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+}
+
 /* ---------- Reduced motion ---------- */
 
 @media (prefers-reduced-motion: reduce) {
@@ -737,4 +930,6 @@ body {
     transition-duration: 0.2s !important;
   }
   #particles { display: none; }
+  .ambient { display: none; }
+  .slide-decor { display: none; }
 }
