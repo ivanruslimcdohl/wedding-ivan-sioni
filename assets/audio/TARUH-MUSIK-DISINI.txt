@@ -1,0 +1,8 @@
+Taruh file musik latar di folder ini dengan nama: music.mp3
+
+Tips:
+- Pilih lagu instrumental/akustik romantis, durasi bebas (akan di-loop otomatis).
+- Kompres ke bitrate 128kbps agar cepat dimuat di HP (bisa pakai https://www.freeconvert.com/mp3-compressor).
+- Kalau mau pakai nama file lain, ubah "musicSrc" di js/config.js.
+
+Selama file belum ada, undangan tetap jalan normal — tombol musik otomatis disembunyikan.
