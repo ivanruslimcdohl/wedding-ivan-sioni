@@ -597,6 +597,9 @@ body {
   justify-content: flex-start;
   padding-top: clamp(2rem, 8vh, 3.5rem);
   padding-bottom: 4.5rem;
+  /* Scroll native menggulirkan konten; di tepi, gesture berlanjut ke Swiper */
+  touch-action: pan-y;
+  overscroll-behavior: contain;
 }
 
 .rsvp-form {
@@ -652,6 +655,8 @@ body {
   padding-right: 2px;
   scrollbar-width: thin;
   scrollbar-color: var(--gold-deep) transparent;
+  touch-action: pan-y;
+  overscroll-behavior: contain;
 }
 
 .wish {

@@ -296,6 +296,11 @@
     },
     touchReleaseOnEdges: true,
     resistanceRatio: 0.6,
+    // Default longSwipesRatio 0.5 menuntut seretan ≥50% layar — terasa macet.
+    // 12% + threshold kecil membuat swipe santai pun langsung berpindah.
+    longSwipesRatio: 0.12,
+    longSwipesMs: 120,
+    threshold: 4,
   });
 
   // Gradasi background bergeser mengikuti posisi scroll keseluruhan
@@ -317,6 +322,8 @@
     if (opened) return;
     opened = true;
 
+    // Swiper 11 membaca params.allowTouchMove, bukan hanya properti instance
+    swiper.params.allowTouchMove = true;
     swiper.allowTouchMove = true;
     swiper.mousewheel.enable();
 
@@ -406,6 +413,42 @@
     tick();
     var timer = setInterval(tick, 1000);
   }
+
+  /* ---------- Scroll bersarang (daftar ucapan di dalam slide) ----------
+     Saat kontainer masih bisa digulir ke arah gesture, tahan event agar
+     Swiper diam dan browser menggulir kontainer; saat sudah mentok,
+     biarkan event lewat sehingga swipe berpindah slide. */
+
+  function nestedScroll(el) {
+    if (!el) return;
+    var startY = 0;
+
+    function shouldContain(dy) {
+      if (el.scrollHeight <= el.clientHeight + 2) return false; // tidak scrollable
+      var atTop = el.scrollTop <= 0;
+      var atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
+      return (dy < 0 && !atBottom) || (dy > 0 && !atTop);
+    }
+
+    el.addEventListener("touchstart", function (ev) {
+      startY = ev.touches[0].clientY;
+    }, { passive: true });
+
+    el.addEventListener("touchmove", function (ev) {
+      if (shouldContain(ev.touches[0].clientY - startY)) ev.stopPropagation();
+    }, { passive: true });
+
+    el.addEventListener("pointerdown", function (ev) {
+      startY = ev.clientY;
+    }, { passive: true });
+
+    el.addEventListener("pointermove", function (ev) {
+      if (shouldContain(ev.clientY - startY)) ev.stopPropagation();
+    }, { passive: true });
+  }
+
+  nestedScroll($("wishes"));
+  nestedScroll(document.querySelector(".rsvp-inner"));
 
   /* ---------- RSVP & ucapan ---------- */
 
