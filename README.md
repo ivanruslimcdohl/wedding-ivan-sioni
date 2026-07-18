@@ -17,7 +17,7 @@ Undangan pernikahan digital mobile-first bertema **elegan glamour emerald & gold
 ## 1. Mengisi Data Acara
 
 Buka `js/config.js`, ganti semua nilai bertanda `GANTI_INI`:
-nama lengkap & orang tua, tanggal (`mainDateISO`, format `2026-12-12T08:00:00+07:00`), jadwal akad & resepsi, link Google Maps, dan nomor rekening.
+nama lengkap & orang tua, tanggal (`mainDateISO`, format `2026-10-03T09:00:00+07:00`), jadwal Holy Matrimony & resepsi, link Google Maps, dan nomor rekening.
 
 ## 2. Mengganti Foto
 
@@ -72,7 +72,7 @@ Nama akan muncul otomatis di halaman cover ("Kepada Yth. …").
 
 Template pesan WhatsApp:
 
-> Bismillahirrahmanirrahim.
+> Shalom.
 > Kepada Yth. *[Nama]*, tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i untuk hadir di acara pernikahan kami:
 > 👉 https://USERNAME.github.io/wedding-ivan-sioni/?to=Nama+Tamu
 > Merupakan suatu kehormatan bagi kami apabila berkenan hadir. Terima kasih. 🙏

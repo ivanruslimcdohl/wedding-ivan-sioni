@@ -8,15 +8,15 @@ window.WEDDING_CONFIG = {
   couple: {
     groom: {
       nick: "Ivan",
-      full: "GANTI_INI Nama Lengkap Mempelai Pria",
-      parents: "Putra dari Bapak GANTI_INI & Ibu GANTI_INI",
+      full: "Ivan Rusli",
+      parents: "Putra dari Bapak Lie Sje Foek & Ibu Irene Khoe",
       instagram: "", // contoh: "ivanrusli" (tanpa @). Kosongkan jika tidak ingin ditampilkan.
       photo: "assets/img/groom.svg",
     },
     bride: {
       nick: "Sioni",
-      full: "GANTI_INI Nama Lengkap Mempelai Wanita",
-      parents: "Putri dari Bapak GANTI_INI & Ibu GANTI_INI",
+      full: "Sara Sioni Santoso",
+      parents: "Putri dari Bapak Sie Djing San & Ibu Njoo Eng Lian",
       instagram: "",
       photo: "assets/img/bride.svg",
     },
@@ -25,30 +25,34 @@ window.WEDDING_CONFIG = {
   event: {
     // Tanggal utama acara (dipakai untuk countdown & Save the Date).
     // Format: "YYYY-MM-DDTHH:mm:ss+07:00" (WIB = +07:00)
-    mainDateISO: "2026-12-12T08:00:00+07:00", // GANTI_INI
+    mainDateISO: "2026-10-03T09:00:00+07:00",
 
+    // "akad" = acara pertama (Holy Matrimony), "resepsi" = acara kedua.
     akad: {
-      title: "Akad Nikah",
-      dateLabel: "Sabtu, 12 Desember 2026", // GANTI_INI
-      timeLabel: "08.00 – 10.00 WIB", // GANTI_INI
-      venue: "GANTI_INI Nama Gedung / Masjid",
-      address: "GANTI_INI Alamat lengkap lokasi akad",
-      mapsUrl: "https://maps.google.com", // GANTI_INI link Google Maps
+      title: "Holy Matrimony",
+      dateLabel: "Sabtu, 3 Oktober 2026",
+      timeLabel: "09.00 – 11.00 WIB",
+      venue: "Wahid Prime Hotel — Ballroom B",
+      address:
+        "Jl. Jend. Sudirman No.95, Kutowinangun Kidul, Kec. Tingkir, Kota Salatiga, Jawa Tengah 50742",
+      mapsUrl: "https://maps.app.goo.gl/NZdKFmt1VzuZAKi99",
     },
     resepsi: {
       title: "Resepsi",
-      dateLabel: "Sabtu, 12 Desember 2026", // GANTI_INI
-      timeLabel: "11.00 – 14.00 WIB", // GANTI_INI
-      venue: "GANTI_INI Nama Gedung Resepsi",
-      address: "GANTI_INI Alamat lengkap lokasi resepsi",
-      mapsUrl: "https://maps.google.com", // GANTI_INI link Google Maps
+      dateLabel: "Sabtu, 3 Oktober 2026",
+      timeLabel: "13.00 WIB – selesai",
+      venue: "Wahid Prime Hotel — Ballroom B",
+      address:
+        "Jl. Jend. Sudirman No.95, Kutowinangun Kidul, Kec. Tingkir, Kota Salatiga, Jawa Tengah 50742",
+      mapsUrl: "https://maps.app.goo.gl/NZdKFmt1VzuZAKi99",
     },
 
     // Untuk tombol "Save the Date" (Google Calendar)
     calendar: {
       title: "Pernikahan Ivan & Sioni",
       details: "Kami menantikan kehadiran Anda di hari bahagia kami.",
-      location: "GANTI_INI Alamat lokasi acara",
+      location:
+        "Wahid Prime Hotel Ballroom B, Jl. Jend. Sudirman No.95, Salatiga",
       // Jam mulai mengikuti mainDateISO; durasi dalam jam:
       durationHours: 6,
     },
@@ -57,14 +61,14 @@ window.WEDDING_CONFIG = {
   // Amplop digital — bisa lebih dari satu rekening / e-wallet
   gifts: [
     {
-      bank: "BCA", // GANTI_INI
-      number: "1234567890", // GANTI_INI
-      holder: "GANTI_INI Nama Pemilik Rekening",
+      bank: "BCA",
+      number: "0810889161",
+      holder: "Sara Sioni Santoso",
     },
     {
-      bank: "GoPay / OVO / DANA", // GANTI_INI
-      number: "081234567890", // GANTI_INI
-      holder: "GANTI_INI Nama Pemilik",
+      bank: "BCA",
+      number: "7370264435",
+      holder: "Ivan Rusli",
     },
   ],
 
@@ -88,8 +92,8 @@ window.WEDDING_CONFIG = {
 
   // Kutipan pembuka & penutup
   quote: {
-    text: "Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang.",
-    source: "QS. Ar-Rum: 21",
+    text: "Karena itu, apa yang telah dipersatukan Allah, tidak boleh diceraikan manusia.",
+    source: "Markus 10:9",
   },
   closing: {
     text: "Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu kepada kami.",
