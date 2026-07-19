@@ -1,7 +1,7 @@
 /* ============================================================
    Undangan Pernikahan — logika utama
-   Animasi sinematik (GSAP) ada di js/animations.js;
-   file ini memegang data, Swiper, countdown, musik, RSVP.
+   Animasi scroll-driven (GSAP ScrollTrigger) ada di js/animations.js;
+   file ini memegang data, navigasi section, countdown, musik, RSVP.
    ============================================================ */
 
 (function () {
@@ -279,53 +279,73 @@
     }
   }
 
-  /* ---------- Swiper ---------- */
+  /* ---------- Navigasi section: dots + section aktif ---------- */
 
-  var swiperEl = $("main-swiper");
-  var swiper = new Swiper("#main-swiper", {
-    direction: "vertical",
-    speed: reducedMotion ? 300 : 1100,
-    parallax: true,
-    watchSlidesProgress: true,
-    allowTouchMove: false, // dikunci sampai cover dibuka
-    mousewheel: { enabled: false, forceToAxis: true, thresholdDelta: 30 },
-    keyboard: { enabled: true },
-    pagination: {
-      el: ".swiper-pagination",
-      clickable: true,
-    },
-    touchReleaseOnEdges: true,
-    resistanceRatio: 0.6,
-    // Default longSwipesRatio 0.5 menuntut seretan ≥50% layar — terasa macet.
-    // 12% + threshold kecil membuat swipe santai pun langsung berpindah.
-    longSwipesRatio: 0.12,
-    longSwipesMs: 120,
-    threshold: 4,
-  });
-
-  // Gradasi background bergeser mengikuti posisi scroll keseluruhan
-  swiper.on("progress", function (s, progress) {
-    swiperEl.style.backgroundPosition = "50% " + (progress * 100).toFixed(2) + "%";
-  });
-
+  var sections = Array.prototype.slice.call(document.querySelectorAll(".story .panel"));
+  var dotsNav = $("dots");
+  var dotBtns = [];
+  var activeIdx = -1;
   var opened = false;
-  swiper.on("slideChangeTransitionStart", function () {
+
+  sections.forEach(function (sec, i) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.setAttribute("aria-label", "Ke bagian " + (i + 1));
+    b.addEventListener("click", function () {
+      sec.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
+    });
+    dotsNav.appendChild(b);
+    dotBtns.push(b);
+  });
+
+  function setActive(i) {
+    if (i === activeIdx) return;
+    activeIdx = i;
+    dotBtns.forEach(function (b, j) { b.classList.toggle("active", j === i); });
     if (!opened) return;
-    if (FX) FX.play(swiper.activeIndex);
+
     window.WeddingParticles.boostUp();
     if (navigator.vibrate) navigator.vibrate(8);
-  });
+    // Burst emas menyambut section penutup
+    if (i === sections.length - 1) {
+      window.WeddingParticles.burst(window.innerWidth / 2, window.innerHeight * 0.32);
+    }
+  }
+
+  // Section dianggap aktif saat melewati pita tengah layar
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) {
+      var i = sections.indexOf(en.target);
+      en.target.classList.toggle("in-view", en.isIntersecting);
+      if (en.isIntersecting) setActive(i);
+    });
+  }, { rootMargin: "-40% 0px -40% 0px", threshold: 0 });
+  sections.forEach(function (s) { io.observe(s); });
+
+  /* ---------- Progress bar scroll ---------- */
+
+  var progressEl = $("scroll-progress");
+  var ticking = false;
+  window.addEventListener("scroll", function () {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () {
+      ticking = false;
+      var max = document.documentElement.scrollHeight - window.innerHeight;
+      progressEl.style.transform = "scaleX(" + (max > 0 ? window.scrollY / max : 0) + ")";
+    });
+  }, { passive: true });
 
   /* ---------- Cover gate ---------- */
+
+  function unlockScroll() {
+    document.body.classList.remove("locked");
+    window.scrollTo(0, 0);
+  }
 
   $("open-btn").addEventListener("click", function () {
     if (opened) return;
     opened = true;
-
-    // Swiper 11 membaca params.allowTouchMove, bukan hanya properti instance
-    swiper.params.allowTouchMove = true;
-    swiper.allowTouchMove = true;
-    swiper.mousewheel.enable();
 
     // Mulai musik (dari gesture klik, jadi lolos kebijakan autoplay)
     startMusic();
@@ -341,9 +361,10 @@
       } else {
         FX.initTilt();
       }
-      FX.openCover();
+      FX.openCover(unlockScroll);
     } else {
       $("cover").classList.add("open");
+      unlockScroll();
     }
   });
 
@@ -413,42 +434,6 @@
     tick();
     var timer = setInterval(tick, 1000);
   }
-
-  /* ---------- Scroll bersarang (daftar ucapan di dalam slide) ----------
-     Saat kontainer masih bisa digulir ke arah gesture, tahan event agar
-     Swiper diam dan browser menggulir kontainer; saat sudah mentok,
-     biarkan event lewat sehingga swipe berpindah slide. */
-
-  function nestedScroll(el) {
-    if (!el) return;
-    var startY = 0;
-
-    function shouldContain(dy) {
-      if (el.scrollHeight <= el.clientHeight + 2) return false; // tidak scrollable
-      var atTop = el.scrollTop <= 0;
-      var atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
-      return (dy < 0 && !atBottom) || (dy > 0 && !atTop);
-    }
-
-    el.addEventListener("touchstart", function (ev) {
-      startY = ev.touches[0].clientY;
-    }, { passive: true });
-
-    el.addEventListener("touchmove", function (ev) {
-      if (shouldContain(ev.touches[0].clientY - startY)) ev.stopPropagation();
-    }, { passive: true });
-
-    el.addEventListener("pointerdown", function (ev) {
-      startY = ev.clientY;
-    }, { passive: true });
-
-    el.addEventListener("pointermove", function (ev) {
-      if (shouldContain(ev.clientY - startY)) ev.stopPropagation();
-    }, { passive: true });
-  }
-
-  nestedScroll($("wishes"));
-  nestedScroll(document.querySelector(".rsvp-inner"));
 
   /* ---------- RSVP & ucapan ---------- */
 

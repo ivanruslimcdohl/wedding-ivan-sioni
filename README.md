@@ -1,6 +1,6 @@
 # 💍 Undangan Pernikahan Digital — Ivan & Sioni
 
-Undangan pernikahan digital mobile-first bertema **elegan glamour emerald & gold**, dengan navigasi fullscreen slide (swipe ke atas seperti story). Di-host gratis di GitHub Pages.
+Undangan pernikahan digital mobile-first bertema **elegan glamour emerald & gold**, dengan scroll sinematik — semua animasi mengikuti gerakan scroll (GSAP ScrollTrigger). Di-host gratis di GitHub Pages.
 
 ## Struktur
 
@@ -9,7 +9,8 @@ Undangan pernikahan digital mobile-first bertema **elegan glamour emerald & gold
 | `js/config.js` | **Semua data acara** — nama, tanggal, lokasi, rekening, dll. Cukup edit file ini. |
 | `index.html` | Struktur halaman (8 section + cover) |
 | `css/style.css` | Tema & animasi |
-| `js/main.js` | Logika: slide, countdown, musik, RSVP |
+| `js/main.js` | Logika: navigasi section, countdown, musik, RSVP |
+| `js/animations.js` | Animasi scroll-driven (GSAP ScrollTrigger) |
 | `assets/img/` | Foto (sementara placeholder) |
 | `assets/audio/` | Musik latar (`music.mp3`) |
 | `apps-script/Code.gs` | Backend RSVP untuk Google Sheets |

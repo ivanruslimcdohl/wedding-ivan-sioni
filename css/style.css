@@ -1,6 +1,7 @@
 /* ============================================================
    TEMA: Elegan Glamour — Emerald Green & Gold
-   Mobile-first. Desktop mendapat frame terpusat max 480px.
+   Mobile-first, scroll natural + animasi scrub (ScrollTrigger).
+   Desktop mendapat frame terpusat max 480px.
    ============================================================ */
 
 :root {
@@ -24,10 +25,9 @@
 
 [hidden] { display: none !important; }
 
-html, body {
-  height: 100%;
-  overflow: hidden;
-  overscroll-behavior: none;
+html {
+  scroll-snap-type: y proximity;
+  overscroll-behavior-y: none;
 }
 
 body {
@@ -38,6 +38,13 @@ body {
     radial-gradient(ellipse 120% 80% at 50% 110%, rgba(4, 106, 56, 0.4), transparent 60%),
     linear-gradient(180deg, var(--emerald-900), var(--emerald-950));
   -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+
+/* Terkunci sampai cover dibuka: dokumen setinggi layar → tak bisa scroll */
+body.locked {
+  overflow: hidden;
+  height: 100dvh;
 }
 
 /* ---------- Utilitas teks & ornamen ---------- */
@@ -56,6 +63,18 @@ body {
 
 @keyframes shimmer {
   to { background-position: 200% center; }
+}
+
+/* SplitText memecah nama menjadi <div> per kata. Transform GSAP membuat
+   tiap kata punya layer sendiri, yang memutus background-clip:text induk —
+   jadi tiap kata wajib membawa gradasi emasnya sendiri. */
+.script-name div {
+  background: linear-gradient(105deg, var(--gold-deep) 0%, var(--gold) 30%, var(--gold-light) 50%, var(--gold) 70%, var(--gold-deep) 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 5s linear infinite;
 }
 
 .eyebrow {
@@ -98,35 +117,6 @@ body {
   background:
     radial-gradient(circle 3px at 50% 50%, var(--gold) 55%, transparent 60%),
     linear-gradient(90deg, transparent, var(--gold) 20%, var(--gold) 80%, transparent) center / 100% 1px no-repeat;
-}
-
-.monogram {
-  font-family: var(--font-serif);
-  font-size: clamp(2.2rem, 9vw, 2.8rem);
-  letter-spacing: 0.1em;
-  color: var(--gold);
-  width: 108px;
-  height: 108px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--gold-border);
-  border-radius: 50%;
-  position: relative;
-  margin-inline: auto;
-}
-.monogram::after {
-  content: "";
-  position: absolute;
-  inset: 6px;
-  border: 1px solid rgba(212, 175, 55, 0.25);
-  border-radius: 50%;
-}
-.monogram span {
-  font-family: var(--font-script);
-  font-size: 0.55em;
-  margin: 0 0.12em;
-  color: var(--gold-light);
 }
 
 /* ---------- Tombol ---------- */
@@ -275,39 +265,75 @@ body {
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ---------- Swiper / slides ---------- */
+/* ---------- Progress scroll (garis emas di atas) ---------- */
 
-.swiper {
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 45;
+  background: linear-gradient(90deg, var(--gold-deep), var(--gold), var(--gold-light));
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  pointer-events: none;
+}
+body.locked .scroll-progress { opacity: 0; }
+
+/* ---------- Story / sections ---------- */
+
+.story {
   width: 100%;
   max-width: 480px;
-  height: 100dvh;
   margin-inline: auto;
+  position: relative;
+  /* Gradasi membentang sepanjang dokumen — warna berubah seiring scroll */
+  background: linear-gradient(180deg,
+    #0e4a37 0%, #0b3d2e 16%, #093c44 36%,
+    #061f17 54%, #0c4030 74%, #04140f 100%);
 }
 
-.swiper-slide {
+.panel {
+  min-height: 100svh;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   position: relative;
+  scroll-snap-align: start;
+}
+
+.panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 120% 60% at 50% 0%, rgba(4, 106, 56, 0.22), transparent 60%);
+  pointer-events: none;
 }
 
 .slide-inner {
   width: 100%;
-  max-height: 100%;
-  padding: clamp(1.2rem, 5vw, 2rem) 1.4rem;
+  padding: clamp(1.6rem, 6vh, 3rem) 1.4rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   gap: 0.85rem;
+  position: relative;
+  z-index: 1;
 }
 
-/* Entrance animation: jalan ulang setiap slide jadi aktif */
-.swiper-slide .anim { opacity: 0; }
-.swiper-slide-active .anim {
+/* Entrance fallback (tanpa GSAP / reduced-motion): jalan saat section terlihat */
+.panel .anim { opacity: 0; }
+.panel.in-view .anim {
   animation: riseIn 0.85s cubic-bezier(0.2, 0.7, 0.3, 1) both;
   animation-delay: var(--d, 0s);
+}
+/* GSAP mengambil alih sepenuhnya */
+body.gsap-on .panel .anim {
+  opacity: 1;
+  animation: none;
 }
 
 @keyframes riseIn {
@@ -315,23 +341,41 @@ body {
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* Pagination bullets */
-.swiper-pagination.swiper-pagination-vertical {
-  right: 8px;
+/* ---------- Navigasi titik ---------- */
+
+.dots {
+  position: fixed;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: opacity 0.5s ease;
 }
-.swiper-pagination-bullet {
+body.locked .dots { opacity: 0; pointer-events: none; }
+
+.dots button {
   width: 6px;
   height: 6px;
+  border-radius: 4px;
+  border: none;
+  padding: 0;
   background: var(--gold);
   opacity: 0.35;
-  transition: all 0.3s ease;
+  cursor: pointer;
+  transition: all 0.5s cubic-bezier(0.68, -0.6, 0.32, 1.6);
 }
-.swiper-pagination-bullet-active {
+.dots button.active {
   opacity: 1;
   height: 20px;
-  border-radius: 4px;
   background: linear-gradient(180deg, var(--gold-light), var(--gold));
   box-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+}
+
+@media (min-width: 520px) {
+  .dots { right: calc(50% - 240px + 12px); }
 }
 
 /* Swipe hint */
@@ -349,11 +393,12 @@ body {
   letter-spacing: 0.25em;
   text-transform: uppercase;
   animation: floatHint 2s ease-in-out infinite;
+  z-index: 1;
 }
 
 @keyframes floatHint {
   0%, 100% { transform: translate(-50%, 0); opacity: 0.7; }
-  50% { transform: translate(-50%, -8px); opacity: 1; }
+  50% { transform: translate(-50%, 8px); opacity: 1; }
 }
 
 /* ---------- Hero ---------- */
@@ -507,6 +552,7 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 0.15rem;
+  perspective: 320px;
 }
 .count-box span {
   font-family: var(--font-serif);
@@ -514,6 +560,11 @@ body {
   font-size: 1.5rem;
   color: var(--gold-light);
   font-variant-numeric: tabular-nums;
+  display: block;
+  width: 100%;
+  text-align: center;
+  backface-visibility: hidden;
+  will-change: transform;
 }
 .count-box small {
   font-size: 0.6rem;
@@ -528,6 +579,15 @@ body {
   color: var(--gold-light);
   max-width: 30ch;
   line-height: 1.6;
+}
+
+/* Tombol Save the Date berdenyut saat section aktif */
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 4px 22px rgba(212, 175, 55, 0.35); }
+  50% { box-shadow: 0 4px 34px rgba(212, 175, 55, 0.75); }
+}
+body.gsap-on .slide-countdown.in-view .btn-gold {
+  animation: glowPulse 2.2s ease-in-out infinite;
 }
 
 /* ---------- Galeri ---------- */
@@ -572,6 +632,8 @@ body {
   flex-direction: column;
   gap: 0.2rem;
   align-items: center;
+  position: relative;
+  overflow: hidden;
 }
 .gift-bank {
   font-size: 0.72rem;
@@ -589,17 +651,34 @@ body {
 .gift-holder { font-size: 0.78rem; color: var(--ivory-dim); }
 .gift-card .btn-outline { margin-top: 0.55rem; font-size: 0.72rem; padding: 0.4rem 1rem; }
 
+/* Sheen emas menyapu kartu saat section aktif */
+.gift-card::after {
+  content: "";
+  position: absolute;
+  top: -30%;
+  bottom: -30%;
+  left: 0;
+  width: 38%;
+  transform: skewX(-20deg) translateX(-180%);
+  background: linear-gradient(90deg, transparent, rgba(243, 229, 171, 0.26), transparent);
+  pointer-events: none;
+}
+body.gsap-on .slide-gift.in-view .gift-card::after {
+  animation: sheen 1.4s 0.5s ease-in-out both;
+}
+body.gsap-on .slide-gift.in-view .gift-card:nth-child(2)::after {
+  animation-delay: 0.8s;
+}
+@keyframes sheen {
+  from { transform: skewX(-20deg) translateX(-180%); }
+  to { transform: skewX(-20deg) translateX(480%); }
+}
+
 /* ---------- RSVP & ucapan ---------- */
 
 .rsvp-inner {
-  max-height: 100dvh;
-  overflow-y: auto;
-  justify-content: flex-start;
-  padding-top: clamp(2rem, 8vh, 3.5rem);
-  padding-bottom: 4.5rem;
-  /* Scroll native menggulirkan konten; di tepi, gesture berlanjut ke Swiper */
-  touch-action: pan-y;
-  overscroll-behavior: contain;
+  padding-top: clamp(2.5rem, 9vh, 4rem);
+  padding-bottom: clamp(2.5rem, 9vh, 4rem);
 }
 
 .rsvp-form {
@@ -650,12 +729,11 @@ body {
   flex-direction: column;
   gap: 0.55rem;
   margin-top: 0.4rem;
-  max-height: 240px;
+  max-height: 260px;
   overflow-y: auto;
   padding-right: 2px;
   scrollbar-width: thin;
   scrollbar-color: var(--gold-deep) transparent;
-  touch-action: pan-y;
   overscroll-behavior: contain;
 }
 
@@ -734,14 +812,8 @@ body {
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
 /* ============================================================
-   LAPISAN SINEMATIK (GSAP) — hanya aktif saat body.gsap-on
+   LAPISAN SINEMATIK (GSAP)
    ============================================================ */
-
-/* GSAP mengambil alih entrance; matikan animasi CSS slide */
-body.gsap-on .swiper-slide .anim {
-  opacity: 1;
-  animation: none;
-}
 
 /* ---------- Cover: tirai emas ---------- */
 
@@ -790,11 +862,11 @@ body.gsap-on .cover { background: none; }
 .cover-frame { z-index: 2; }
 .cover-inner { position: relative; z-index: 3; }
 
-/* ---------- Kata dekoratif raksasa di belakang tiap slide ---------- */
+/* ---------- Kata dekoratif raksasa di belakang tiap section ---------- */
 
 .slide-decor {
   position: absolute;
-  top: 6%;
+  top: 38%;
   left: 0;
   right: 0;
   text-align: center;
@@ -806,8 +878,8 @@ body.gsap-on .cover { background: none; }
   white-space: nowrap;
   pointer-events: none;
   z-index: 0;
+  will-change: transform;
 }
-.slide-inner { position: relative; z-index: 1; }
 
 /* ---------- Layer ambient: daun emas + light ray ---------- */
 
@@ -863,69 +935,6 @@ body.gsap-on .cover { background: none; }
   fill: var(--gold-light);
 }
 
-/* ---------- Background swiper bergeser saat scroll ---------- */
-
-.swiper {
-  background: linear-gradient(180deg,
-    #0e4a37 0%, #0b3d2e 16%, #093c44 36%,
-    #061f17 54%, #0c4030 74%, #04140f 100%);
-  background-size: 100% 850%;
-  background-position: 50% 0%;
-}
-.swiper::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background: radial-gradient(ellipse 120% 60% at 50% 0%, rgba(4, 106, 56, 0.3), transparent 60%);
-  pointer-events: none;
-}
-
-/* ---------- Flip angka countdown ---------- */
-
-.count-box { perspective: 320px; }
-.count-box span {
-  display: block;
-  width: 100%;
-  text-align: center;
-  backface-visibility: hidden;
-  will-change: transform;
-}
-
-/* ---------- Sheen kartu amplop ---------- */
-
-.gift-card {
-  position: relative;
-  overflow: hidden;
-}
-.gift-card::after {
-  content: "";
-  position: absolute;
-  top: -30%;
-  bottom: -30%;
-  left: 0;
-  width: 38%;
-  transform: skewX(-20deg) translateX(-180%);
-  background: linear-gradient(90deg, transparent, rgba(243, 229, 171, 0.26), transparent);
-  pointer-events: none;
-}
-body.gsap-on .slide-gift.swiper-slide-active .gift-card::after {
-  animation: sheen 1.4s 1s ease-in-out both;
-}
-body.gsap-on .slide-gift.swiper-slide-active .gift-card:nth-child(2)::after {
-  animation-delay: 1.3s;
-}
-@keyframes sheen {
-  from { transform: skewX(-20deg) translateX(-180%); }
-  to { transform: skewX(-20deg) translateX(480%); }
-}
-
-/* ---------- Bullet pagination spring ---------- */
-
-.swiper-pagination-bullet {
-  transition: all 0.5s cubic-bezier(0.68, -0.6, 0.32, 1.6);
-}
-
 /* ---------- Reduced motion ---------- */
 
 @media (prefers-reduced-motion: reduce) {
@@ -937,4 +946,5 @@ body.gsap-on .slide-gift.swiper-slide-active .gift-card:nth-child(2)::after {
   #particles { display: none; }
   .ambient { display: none; }
   .slide-decor { display: none; }
+  html { scroll-snap-type: none; }
 }
