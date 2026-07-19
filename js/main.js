@@ -36,6 +36,13 @@
     toastTimer = setTimeout(function () { el.classList.remove("show"); }, 2600);
   }
 
+  function emit(name, detail) {
+    window.dispatchEvent(new CustomEvent(name, { detail: detail || {} }));
+  }
+
+  // API kecil untuk layer kejutan (js/delight.js)
+  window.WeddingUI = { toast: toast };
+
   /* ---------- Partikel emas (ambient + burst) ---------- */
 
   window.WeddingParticles = (function () {
@@ -44,9 +51,13 @@
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
     var particles = [];
     var COUNT = 34;
+    var MAX = 220; // cap total agar aman di HP kelas menengah
     var running = false;
     var started = false;
     var boost = 1;
+
+    var CONFETTI_COLORS = ["#d4af37", "#f3e5ab", "#a8842c", "#f7f3e8", "#3f9b6e"];
+    var HEART_COLORS = ["#d4af37", "#f3e5ab", "#e8a1a4"];
 
     function resize() {
       canvas.width = window.innerWidth * dpr;
@@ -66,6 +77,53 @@
       };
     }
 
+    function hexA(hex, a) {
+      var r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
+      return "rgba(" + r + "," + g + "," + b + "," + Math.max(0, a).toFixed(3) + ")";
+    }
+
+    function drawHeart(p, a) {
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      var s = p.r / 5;
+      ctx.scale(s, s);
+      ctx.beginPath();
+      ctx.moveTo(0, 3.2);
+      ctx.bezierCurveTo(-6, -2.6, -3.2, -7.4, 0, -3.6);
+      ctx.bezierCurveTo(3.2, -7.4, 6, -2.6, 0, 3.2);
+      ctx.closePath();
+      ctx.fillStyle = hexA(p.color, a);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawCoin(p, a) {
+      var squash = Math.max(0.12, Math.abs(Math.cos(p.tw * 3))); // koin berputar
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot * 0.3);
+      ctx.scale(squash, 1);
+      ctx.beginPath();
+      ctx.arc(0, 0, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = hexA("#d4af37", a);
+      ctx.fill();
+      ctx.lineWidth = 1.2 * dpr;
+      ctx.strokeStyle = hexA("#a8842c", a);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawConfetti(p, a) {
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.scale(1, Math.max(0.15, Math.abs(Math.sin(p.tw * 2)))); // kepakan kertas
+      ctx.fillStyle = hexA(p.color, a);
+      ctx.fillRect(-p.r, -p.r * 0.65, p.r * 2, p.r * 1.3);
+      ctx.restore();
+    }
+
     function frame() {
       if (!running) return;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -77,9 +135,11 @@
         if (p.burst) {
           p.x += p.bvx;
           p.y += p.bvy;
-          p.bvy += 0.045 * dpr; // gravitasi halus
+          p.bvy += (p.grav != null ? p.grav : 0.045 * dpr);
+          if (p.sway) p.bvx += Math.sin(p.tw * 2) * 0.05 * dpr;
           p.life -= p.decay;
-          if (p.life <= 0) { particles.splice(i, 1); continue; }
+          p.rot += p.spin;
+          if (p.life <= 0 || p.y > canvas.height + 24 * dpr) { particles.splice(i, 1); continue; }
         } else {
           p.y -= p.vy * boost;
           p.x += p.vx;
@@ -87,13 +147,19 @@
         }
 
         p.tw += p.twSpeed;
-        var a = (p.burst ? p.alpha * p.life : p.alpha) * (0.6 + 0.4 * Math.sin(p.tw));
+        var a = (p.burst ? p.alpha * Math.min(1, p.life * 1.6) : p.alpha) * (0.6 + 0.4 * Math.sin(p.tw));
+
+        if (p.shape === "heart") { drawHeart(p, a); continue; }
+        if (p.shape === "coin") { drawCoin(p, a); continue; }
+        if (p.shape === "confetti") { drawConfetti(p, a); continue; }
+
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fillStyle = "rgba(212, 175, 55, " + Math.max(0, a).toFixed(3) + ")";
         ctx.shadowColor = "rgba(243, 229, 171, 0.8)";
         ctx.shadowBlur = 6 * dpr;
         ctx.fill();
+        ctx.shadowBlur = 0;
       }
       requestAnimationFrame(frame);
     }
@@ -114,30 +180,77 @@
       });
     }
 
-    // Ledakan partikel emas dari titik (x, y) layar
-    function burst(x, y, n) {
+    function decorate(p, shape, i) {
+      p.shape = shape;
+      p.rot = Math.random() * Math.PI * 2;
+      p.spin = (Math.random() - 0.5) * 0.22;
+      p.twSpeed = Math.random() * 0.06 + 0.02;
+      if (shape === "heart") {
+        p.color = HEART_COLORS[i % HEART_COLORS.length];
+        p.r = (Math.random() * 3 + 4) * dpr;
+      } else if (shape === "coin") {
+        p.r = (Math.random() * 2.4 + 3) * dpr;
+      } else if (shape === "confetti") {
+        p.color = CONFETTI_COLORS[i % CONFETTI_COLORS.length];
+        p.r = (Math.random() * 2.6 + 2.4) * dpr;
+        p.sway = true;
+      }
+    }
+
+    // Ledakan partikel dari titik (x, y) layar
+    function burst(x, y, n, opts) {
       if (!started) return;
+      opts = opts || {};
       n = n || 26;
       for (var i = 0; i < n; i++) {
-        var ang = Math.random() * Math.PI * 2;
-        var speed = (Math.random() * 2.6 + 1.2) * dpr;
+        if (particles.length >= MAX) break;
+        var ang = opts.up
+          ? -Math.PI / 2 + (Math.random() - 0.5) * 1.3
+          : Math.random() * Math.PI * 2;
+        var speed = (Math.random() * 2.6 + 1.2) * dpr * (opts.speed || 1);
         var p = spawn(true);
         p.burst = true;
         p.x = x * dpr;
         p.y = y * dpr;
         p.bvx = Math.cos(ang) * speed;
         p.bvy = Math.sin(ang) * speed - 1.2 * dpr;
-        p.r = (Math.random() * 2 + 0.8) * dpr;
-        p.alpha = 0.9;
+        p.alpha = 0.95;
         p.life = 1;
         p.decay = Math.random() * 0.012 + 0.008;
+        p.grav = 0.045 * dpr;
+        if (opts.shape && opts.shape !== "dot") decorate(p, opts.shape, i);
+        else { p.shape = "dot"; p.r = (Math.random() * 2 + 0.8) * dpr; p.rot = 0; p.spin = 0; }
+        particles.push(p);
+      }
+    }
+
+    // Hujan dari atas layar (konfeti / emas)
+    function rain(n, shape) {
+      if (!started) return;
+      n = n || 100;
+      for (var i = 0; i < n; i++) {
+        if (particles.length >= MAX) break;
+        var p = spawn(true);
+        p.burst = true;
+        p.x = Math.random() * canvas.width;
+        p.y = -Math.random() * 0.7 * canvas.height - 10 * dpr;
+        p.bvx = (Math.random() - 0.5) * 0.9 * dpr;
+        p.bvy = (Math.random() * 1.8 + 1.6) * dpr;
+        p.grav = 0.012 * dpr;
+        p.alpha = 0.95;
+        p.life = 1;
+        p.decay = Math.random() * 0.003 + 0.0035;
+        decorate(p, shape || "confetti", i);
+        if ((shape || "confetti") === "dot") { p.shape = "dot"; p.r = (Math.random() * 2 + 1) * dpr; }
         particles.push(p);
       }
     }
 
     function boostUp() { boost = 2.4; }
 
-    return { start: start, burst: burst, boostUp: boostUp };
+    function count() { return particles.length; }
+
+    return { start: start, burst: burst, rain: rain, boostUp: boostUp, count: count };
   })();
 
   /* ---------- Isi data dari config ---------- */
@@ -216,8 +329,9 @@
         '<span class="gift-number">' + escapeHtml(gift.number) + "</span>" +
         '<span class="gift-holder">a.n. ' + escapeHtml(gift.holder) + "</span>" +
         '<button type="button" class="btn-outline btn-copy">Salin Nomor</button>';
-      card.querySelector(".btn-copy").addEventListener("click", function () {
-        copyText(gift.number);
+      card.querySelector(".btn-copy").addEventListener("click", function (ev) {
+        var r = ev.currentTarget.getBoundingClientRect();
+        copyText(gift.number, { x: r.left + r.width / 2, y: r.top + r.height / 2 });
       });
       giftList.appendChild(card);
     });
@@ -229,18 +343,23 @@
     $("bg-music").src = CFG.musicSrc;
   }
 
-  function copyText(text) {
+  function copiedFx(pos) {
+    toast("Tersalin! Tuhan memberkati kemurahan hatimu 🤍");
+    if (pos) emit("wedding:copy", pos);
+  }
+
+  function copyText(text, pos) {
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(
-        function () { toast("Nomor tersalin ✓"); },
-        function () { fallbackCopy(text); }
+        function () { copiedFx(pos); },
+        function () { fallbackCopy(text, pos); }
       );
     } else {
-      fallbackCopy(text);
+      fallbackCopy(text, pos);
     }
   }
 
-  function fallbackCopy(text) {
+  function fallbackCopy(text, pos) {
     var ta = document.createElement("textarea");
     ta.value = text;
     ta.style.position = "fixed";
@@ -249,7 +368,7 @@
     ta.select();
     try {
       document.execCommand("copy");
-      toast("Nomor tersalin ✓");
+      copiedFx(pos);
     } catch (e) {
       toast("Gagal menyalin, salin manual ya");
     }
@@ -314,6 +433,7 @@
     if (i === scenes.length - 1) {
       window.WeddingParticles.burst(window.innerWidth / 2, window.innerHeight * 0.32);
     }
+    emit("wedding:scene", { index: i, total: scenes.length });
   }
 
   /* Scene aktif = scene teratas yang panelnya sedang tampil.
@@ -335,6 +455,7 @@
   /* ---------- Progress bar scroll ---------- */
 
   var progressEl = $("scroll-progress");
+  var ringEl = $("progress-ring");
   var ticking = false;
   window.addEventListener("scroll", function () {
     if (ticking) return;
@@ -342,7 +463,10 @@
     requestAnimationFrame(function () {
       ticking = false;
       var max = document.documentElement.scrollHeight - window.innerHeight;
-      progressEl.style.transform = "scaleX(" + (max > 0 ? window.scrollY / max : 0) + ")";
+      var p = max > 0 ? window.scrollY / max : 0;
+      progressEl.style.transform = "scaleX(" + p + ")";
+      // Cincin 💍 meluncur di ujung garis progress
+      if (ringEl) ringEl.style.transform = "translateX(" + (p * (window.innerWidth - 20)).toFixed(1) + "px)";
     });
   }, { passive: true });
 
@@ -362,7 +486,10 @@
 
     if (!reducedMotion) window.WeddingParticles.start();
 
-    // iOS butuh izin gyro dari gesture user; Android langsung jalan
+    // iOS butuh izin gyro & motion dari gesture user; Android langsung jalan
+    if (window.DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
+      DeviceMotionEvent.requestPermission().catch(function () {});
+    }
     if (FX) {
       if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
         DeviceOrientationEvent.requestPermission()
@@ -376,6 +503,8 @@
       $("cover").classList.add("open");
       unlockScroll();
     }
+
+    emit("wedding:opened", {});
   });
 
   /* ---------- Musik ---------- */
@@ -508,7 +637,11 @@
       body: data.toString(),
     })
       .then(function () {
-        toast("Terima kasih atas ucapannya! 🤍");
+        var att = data.get("attendance");
+        toast(att === "Hadir"
+          ? "Yeay! Sampai jumpa di sana 🎉"
+          : "Terima kasih, doamu sangat berarti 🤍");
+        emit("wedding:rsvp", { attendance: att });
         // Tampilkan langsung tanpa menunggu reload dari server
         var box = $("wishes");
         var empty = box.querySelector(".wishes-empty");
