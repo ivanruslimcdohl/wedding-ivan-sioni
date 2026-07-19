@@ -1,8 +1,9 @@
 /* ============================================================
-   WeddingFX — mesin animasi scroll-driven (GSAP + ScrollTrigger)
-   Semua gerakan di-scrub: maju-mundur mengikuti posisi scroll,
-   bukan diputar sekali setelah pindah section.
-   Jika GSAP gagal dimuat, main.js jatuh ke animasi CSS sederhana.
+   WeddingFX — mesin animasi scene-stack (GSAP + ScrollTrigger)
+   Tiap section = "scene": panel sticky terkunci di layar selagi
+   scroll memainkan timeline-nya (scrub, bolak-balik mengikuti
+   jari), lalu scene berikutnya menggeser naik menutupinya.
+   Jika GSAP gagal dimuat, main.js jatuh ke fallback CSS.
    ============================================================ */
 
 window.WeddingFX = (function () {
@@ -27,11 +28,13 @@ window.WeddingFX = (function () {
     return 2 * Math.PI * parseFloat(c.getAttribute("r"));
   }
 
-  // fromTo eksplisit: .from() di timeline ter-scrub bisa salah merekam nilai
-  // akhirnya saat ScrollTrigger me-refresh (elemen sedang di posisi "from"),
-  // membuatnya macet. Dengan kedua ujung ditulis eksplisit, tidak ada yang
-  // perlu direkam — deterministik. immediateRender menyembunyikan elemen
-  // sejak build agar tidak berkedip sebelum discroll.
+  /* Semua tween scrub memakai fromTo eksplisit (kedua ujung ditulis,
+     tidak ada perekaman nilai otomatis yang bisa meleset saat refresh).
+     F  : tersembunyi → normal (build-in). immediateRender agar elemen
+          tersembunyi sejak build, tidak berkedip sebelum discroll.
+     T  : normal → keluar (build-out). immediateRender false agar tidak
+          menimpa state saat build; render pertama terjadi saat discroll. */
+
   var NEUTRAL = {
     x: 0, y: 0, xPercent: 0, yPercent: 0, opacity: 1,
     scale: 1, scaleX: 1, scaleY: 1,
@@ -39,21 +42,35 @@ window.WeddingFX = (function () {
   };
   var CONFIG_KEYS = { duration: 1, ease: 1, stagger: 1 };
 
-  function F(tl, targets, vars, pos) {
-    if (!targets || (targets.length !== undefined && !targets.length)) return;
-    var from = {}, to = { immediateRender: true };
+  function splitVars(vars, immediate, invert) {
+    var from = {}, to = { immediateRender: immediate };
     for (var k in vars) {
       if (CONFIG_KEYS[k]) {
         to[k] = vars[k];
       } else if (k === "transformOrigin" || k === "transformPerspective") {
         from[k] = vars[k];
         to[k] = vars[k];
-      } else {
+      } else if (invert) { // T: dari netral menuju nilai vars
+        from[k] = NEUTRAL.hasOwnProperty(k) ? NEUTRAL[k] : 0;
+        to[k] = vars[k];
+      } else { // F: dari nilai vars menuju netral
         from[k] = vars[k];
         to[k] = NEUTRAL.hasOwnProperty(k) ? NEUTRAL[k] : vars[k];
       }
     }
-    tl.fromTo(targets, from, to, pos);
+    return { from: from, to: to };
+  }
+
+  function F(tl, targets, vars, pos) {
+    if (!targets || (targets.length !== undefined && !targets.length)) return;
+    var v = splitVars(vars, true, false);
+    tl.fromTo(targets, v.from, v.to, pos);
+  }
+
+  function T(tl, targets, vars, pos) {
+    if (!targets || (targets.length !== undefined && !targets.length)) return;
+    var v = splitVars(vars, false, true);
+    tl.fromTo(targets, v.from, v.to, pos);
   }
 
   /* ---------- Persiapan (split teks setelah font siap) ---------- */
@@ -66,10 +83,6 @@ window.WeddingFX = (function () {
         splits.closingName = new SplitText(".slide-closing .script-name", { type: "words" });
         splits.heroDate = new SplitText("#hero-date", { type: "chars" });
         splits.heroDate.chars.forEach(function (ch) {
-          var wrap = document.createElement("span");
-          wrap.style.cssText = "display:inline-block;overflow:hidden;vertical-align:bottom;";
-          ch.parentNode.insertBefore(wrap, ch);
-          wrap.appendChild(ch);
           ch.style.display = "inline-block";
         });
       } catch (e) { /* font/split gagal → pakai elemen utuh */ }
@@ -77,106 +90,169 @@ window.WeddingFX = (function () {
     ready = true;
   }
 
-  /* ---------- Timeline scrub per section (fase masuk) ----------
-     Skala waktu relatif: total ± 1 "detik" timeline dipetakan ke
-     rentang scroll "top 90% → top 20%" (section naik dari bawah
-     layar sampai hampir penuh). */
+  /* ---------- Fase MASUK: scene menggeser naik menutupi panel lama ----------
+     Rentang: scene top dari dasar layar → puncak layar. Ringan saja
+     (judul/pembuka); choreography utama main di fase pinned. */
 
-  function titleIn(tl, sec) {
-    F(tl, q(sec, ".section-title"), { y: 48, opacity: 0, duration: 0.3 }, 0);
-    F(tl, q(sec, ".gold-divider"), { scaleX: 0, opacity: 0, duration: 0.25 }, 0.08);
+  function titleIn(tl, panel) {
+    F(tl, q(panel, ".section-title"), { y: 60, opacity: 0, duration: 0.35 }, 0.25);
+    F(tl, q(panel, ".gold-divider"), { scaleX: 0, opacity: 0, duration: 0.3 }, 0.4);
   }
 
-  var enter = {
-    // 1 — MEMPELAI: foto reveal lingkaran berputar, nama masuk miring
-    1: function (tl, sec) {
-      F(tl, q(sec, ".eyebrow"), { y: 40, opacity: 0, duration: 0.3 }, 0);
-      F(tl, q(sec, ".section-intro"), { y: 46, opacity: 0, duration: 0.35 }, 0.05);
-      q(sec, ".person").forEach(function (p, i) {
-        var at = 0.12 + i * 0.3;
+  var slideIn = {
+    1: function (tl, panel) {
+      F(tl, q(panel, ".eyebrow"), { y: 50, opacity: 0, duration: 0.35 }, 0.25);
+      F(tl, q(panel, ".section-intro"), { y: 60, opacity: 0, duration: 0.4 }, 0.4);
+    },
+    2: function (tl, panel) { titleIn(tl, panel); },
+    3: function (tl, panel) {
+      titleIn(tl, panel);
+      F(tl, q(panel, ".section-intro"), { y: 40, opacity: 0, duration: 0.3 }, 0.5);
+    },
+    4: function (tl, panel) {
+      titleIn(tl, panel);
+      F(tl, q(panel, ".gallery-viewport"), { y: 80, opacity: 0, duration: 0.4 }, 0.45);
+      F(tl, q(panel, ".gallery-counter"), { opacity: 0, duration: 0.3 }, 0.6);
+    },
+    // RSVP (non-sticky): seluruh build terjadi saat naik
+    5: function (tl, panel) {
+      titleIn(tl, panel);
+      q(panel, ".rsvp-form > *").forEach(function (f, i) {
+        F(tl, [f], { x: i % 2 ? 80 : -80, opacity: 0, duration: 0.3 }, 0.35 + i * 0.08);
+      });
+      F(tl, [panel.querySelector(".wishes")], { y: 70, opacity: 0, duration: 0.3 }, 0.7);
+    },
+    6: function (tl, panel) {
+      titleIn(tl, panel);
+      F(tl, q(panel, ".section-intro"), { y: 40, opacity: 0, duration: 0.3 }, 0.5);
+    },
+    7: function (tl, panel) {
+      F(tl, q(panel, ".section-intro"), { y: 50, opacity: 0, duration: 0.35 }, 0.3);
+      F(tl, q(panel, ".eyebrow, .closing-sign"), { y: 30, opacity: 0, duration: 0.3, stagger: 0.08 }, 0.5);
+    },
+  };
+
+  /* ---------- Fase PINNED: panel terkunci, scroll = timeline ---------- */
+
+  var pinned = {
+    // 0 — HERO zoom-through: kamera "menembus" monogram, teks berpencar
+    0: function (tl, panel) {
+      T(tl, q(panel, ".swipe-hint"), { opacity: 0, y: 40, duration: 0.12, ease: "none" }, 0);
+      T(tl, q(panel, ".monogram-svg"), { scale: 6, opacity: 0, transformOrigin: "50% 50%", duration: 0.55, ease: "power2.in" }, 0.05);
+      T(tl, q(panel, ".eyebrow"), { opacity: 0, y: -40, duration: 0.3, ease: "power1.in" }, 0.1);
+      var words = (splits.heroName && splits.heroName.words.length) ? splits.heroName.words : q(panel, ".script-name");
+      T(tl, words, {
+        y: function (i) { return -(120 + i * 70); },
+        opacity: 0, duration: 0.5, stagger: 0.06, ease: "power1.in",
+      }, 0.22);
+      T(tl, q(panel, ".gold-divider"), { scaleX: 0, opacity: 0, duration: 0.3, ease: "power1.in" }, 0.3);
+      var chars = (splits.heroDate && splits.heroDate.chars.length) ? splits.heroDate.chars : q(panel, ".hero-date");
+      T(tl, chars, {
+        y: function (i) { return -(30 + (i % 4) * 26); },
+        opacity: 0, duration: 0.4, stagger: 0.02, ease: "power1.in",
+      }, 0.35);
+      T(tl, q(panel, ".quote"), { y: -60, opacity: 0, duration: 0.4, ease: "power1.in" }, 0.42);
+      tl.to({}, { duration: 0.18 }); // hening sejenak sebelum ditutup scene berikut
+    },
+
+    // 1 — MEMPELAI: cerita berurutan — pria, "&", wanita
+    1: function (tl, panel) {
+      var persons = q(panel, ".person");
+      persons.forEach(function (p, i) {
+        var at = i * 0.48;
         tl.fromTo(p.querySelector(".photo-ring"),
           { clipPath: "circle(0% at 50% 50%)", rotation: -120 },
-          { clipPath: "circle(75% at 50% 50%)", rotation: 0, duration: 0.5, immediateRender: true }, at);
+          { clipPath: "circle(75% at 50% 50%)", rotation: 0, duration: 0.3, ease: "power2.out", immediateRender: true }, at);
         tl.fromTo(p.querySelector("img"),
           { rotation: 120, scale: 1.35 },
-          { rotation: 0, scale: 1, duration: 0.5, immediateRender: true }, at);
-        F(tl, [p.querySelector(".person-name")], { x: i % 2 ? 70 : -70, skewX: i % 2 ? 10 : -10, opacity: 0, duration: 0.3 }, at + 0.18);
-        F(tl, [p.querySelector(".person-parents")], { y: 26, opacity: 0, duration: 0.3 }, at + 0.26);
+          { rotation: 0, scale: 1, duration: 0.3, ease: "power2.out", immediateRender: true }, at);
+        F(tl, [p.querySelector(".person-name")], { x: i % 2 ? 70 : -70, skewX: i % 2 ? 10 : -10, opacity: 0, duration: 0.18, ease: "power2.out" }, at + 0.14);
+        F(tl, [p.querySelector(".person-parents")], { y: 26, opacity: 0, duration: 0.16, ease: "power2.out" }, at + 0.22);
       });
-      F(tl, q(sec, ".script-amp"), { scale: 0, rotation: 220, opacity: 0, duration: 0.35, ease: "back.out(2)" }, 0.42);
+      F(tl, q(panel, ".script-amp"), { scale: 0, rotation: 220, opacity: 0, duration: 0.2, ease: "back.out(2)" }, 0.36);
+      tl.to({}, { duration: 0.1 });
     },
 
-    // 2 — ACARA: kartu bangkit sambil menegak 3D, isi menyusul
-    2: function (tl, sec) {
-      titleIn(tl, sec);
-      q(sec, ".event-card").forEach(function (card, i) {
-        var at = 0.15 + i * 0.28;
+    // 2 — ACARA: kartu Holy Matrimony dulu, lalu Resepsi
+    2: function (tl, panel) {
+      q(panel, ".event-card").forEach(function (card, i) {
+        var at = i * 0.42;
         F(tl, [card], {
-          rotationX: 65, y: 130, opacity: 0, transformOrigin: "50% 0%",
-          transformPerspective: 900, duration: 0.5,
+          rotationX: 70, y: 140, opacity: 0, transformOrigin: "50% 0%",
+          transformPerspective: 900, duration: 0.28, ease: "power2.out",
         }, at);
         F(tl, q(card, ".event-name, .event-date, .event-time, .event-venue, .event-address"),
-          { y: 22, opacity: 0, duration: 0.22, stagger: 0.04 }, at + 0.18);
-        F(tl, [card.querySelector(".btn-outline")], { scale: 0.6, opacity: 0, duration: 0.2, ease: "back.out(2)" }, at + 0.3);
+          { y: 24, opacity: 0, duration: 0.14, stagger: 0.025, ease: "power2.out" }, at + 0.12);
+        F(tl, [card.querySelector(".btn-outline")], { scale: 0.6, opacity: 0, duration: 0.12, ease: "back.out(2)" }, at + 0.2);
+      });
+      tl.to({}, { duration: 0.16 });
+    },
+
+    // 3 — COUNTDOWN: kotak jatuh satu-satu dengan puntiran, tombol pop
+    3: function (tl, panel) {
+      q(panel, ".count-box").forEach(function (box, i) {
+        F(tl, [box], {
+          y: -140, opacity: 0, rotation: i % 2 ? 9 : -9,
+          duration: 0.2, ease: "back.out(1.6)",
+        }, i * 0.14);
+      });
+      F(tl, q(panel, ".btn-gold"), { scale: 0.5, opacity: 0, duration: 0.2, ease: "back.out(2)" }, 0.62);
+      tl.to({}, { duration: 0.18 });
+    },
+
+    // 4 — GALERI: filmstrip horizontal digerakkan scroll + foto tengah membesar
+    4: function (tl, panel) {
+      var strip = panel.querySelector(".gallery-strip");
+      var viewport = panel.querySelector(".gallery-viewport");
+      var counter = panel.querySelector(".gallery-counter");
+      var frames = q(panel, ".gframe");
+      if (!strip || !frames.length) return;
+
+      tl.fromTo(strip, { x: 0 }, {
+        x: function () { return -Math.max(0, strip.scrollWidth - viewport.clientWidth); },
+        duration: 1, ease: "none", immediateRender: false,
+      }, 0);
+
+      tl.eventCallback("onUpdate", function () {
+        var n = frames.length;
+        if (counter) {
+          var idx = Math.min(n, Math.max(1, Math.round(tl.progress() * (n - 1)) + 1));
+          counter.textContent = idx + " / " + n;
+        }
+        var cx = window.innerWidth / 2;
+        frames.forEach(function (f) {
+          var r = f.getBoundingClientRect();
+          var d = Math.abs(r.left + r.width / 2 - cx) / window.innerWidth;
+          gsap.set(f, { scale: Math.max(0.92, 1.06 - d * 0.28) });
+        });
       });
     },
 
-    // 3 — COUNTDOWN: kotak angka turun bergantian dengan puntiran
-    3: function (tl, sec) {
-      titleIn(tl, sec);
-      F(tl, q(sec, ".section-intro"), { y: 30, opacity: 0, duration: 0.25 }, 0.1);
-      F(tl, q(sec, ".count-box"), {
-        y: -130, opacity: 0, duration: 0.45, stagger: 0.07, ease: "back.out(1.6)",
-        rotation: function (i) { return i % 2 ? 7 : -7; },
-      }, 0.22);
-      F(tl, q(sec, ".btn-gold"), { scale: 0.5, opacity: 0, duration: 0.3, ease: "back.out(2)" }, 0.6);
-    },
-
-    // 4 — GALERI: tile wipe bergantian arah + zoom-settle
-    4: function (tl, sec) {
-      titleIn(tl, sec);
-      q(sec, ".gallery-grid img").forEach(function (img, i) {
-        tl.fromTo(img,
-          { clipPath: i % 2 ? "inset(0 0 0 100%)" : "inset(0 100% 0 0)", scale: 1.25 },
-          { clipPath: "inset(0 0% 0 0%)", scale: 1, duration: 0.4, ease: "power2.inOut", immediateRender: true },
-          0.12 + i * 0.1);
+    // 6 — AMPLOP: kartu rekening membuka bergantian seperti pintu emas
+    6: function (tl, panel) {
+      q(panel, ".gift-card").forEach(function (card, i) {
+        F(tl, [card], {
+          rotationY: -85, x: -60, opacity: 0, transformOrigin: "0% 50%",
+          transformPerspective: 1000, duration: 0.3, ease: "power2.out",
+        }, i * 0.35);
       });
+      tl.to({}, { duration: 0.2 });
     },
 
-    // 5 — RSVP: field form zig-zag, daftar ucapan menyusul
-    5: function (tl, sec) {
-      titleIn(tl, sec);
-      q(sec, ".rsvp-form > *").forEach(function (f, i) {
-        F(tl, [f], { x: i % 2 ? 80 : -80, opacity: 0, duration: 0.3 }, 0.12 + i * 0.07);
-      });
-      F(tl, [sec.querySelector(".wishes")], { y: 70, opacity: 0, duration: 0.35 }, 0.5);
-    },
-
-    // 6 — AMPLOP: kartu rekening membuka seperti pintu emas
-    6: function (tl, sec) {
-      titleIn(tl, sec);
-      F(tl, q(sec, ".section-intro"), { y: 34, opacity: 0, duration: 0.3 }, 0.1);
-      F(tl, q(sec, ".gift-card"), {
-        rotationY: -85, x: -60, opacity: 0, transformOrigin: "0% 50%",
-        transformPerspective: 1000, duration: 0.5, stagger: 0.15,
-      }, 0.2);
-    },
-
-    // 7 — PENUTUP: monogram menggambar diri mengikuti scroll
-    7: function (tl, sec) {
-      q(sec, ".monogram-svg circle").forEach(function (c, i) {
+    // 7 — PENUTUP: monogram menggambar diri mengikuti scroll, nama naik
+    7: function (tl, panel) {
+      q(panel, ".monogram-svg circle").forEach(function (c, i) {
         var len = circleLen(c);
         tl.fromTo(c,
           { strokeDasharray: len, strokeDashoffset: len },
-          { strokeDashoffset: 0, duration: 0.5, ease: "none", immediateRender: true }, i * 0.06);
+          { strokeDashoffset: 0, duration: 0.4, ease: "none", immediateRender: true }, i * 0.05);
       });
-      F(tl, q(sec, ".mono-text"), { opacity: 0, scale: 0.4, transformOrigin: "50% 50%", duration: 0.3, ease: "back.out(2)" }, 0.25);
-      F(tl, q(sec, ".section-intro"), { y: 40, opacity: 0, duration: 0.3 }, 0.2);
-      F(tl, q(sec, ".eyebrow, .closing-sign"), { y: 24, opacity: 0, duration: 0.25, stagger: 0.06 }, 0.35);
-      var nameTargets = (splits.closingName && splits.closingName.words.length) ? splits.closingName.words : q(sec, ".script-name");
-      F(tl, nameTargets, { yPercent: 130, opacity: 0, duration: 0.4, stagger: 0.08, ease: "back.out(1.6)" }, 0.45);
-      F(tl, q(sec, ".gold-divider"), { scaleX: 0, opacity: 0, duration: 0.25 }, 0.6);
-      F(tl, q(sec, ".credit"), { opacity: 0, duration: 0.3 }, 0.7);
+      F(tl, q(panel, ".mono-text"), { opacity: 0, scale: 0.4, transformOrigin: "50% 50%", duration: 0.2, ease: "back.out(2)" }, 0.2);
+      var nameTargets = (splits.closingName && splits.closingName.words.length) ? splits.closingName.words : q(panel, ".script-name");
+      F(tl, nameTargets, { yPercent: 130, opacity: 0, duration: 0.25, stagger: 0.07, ease: "back.out(1.6)" }, 0.35);
+      F(tl, q(panel, ".gold-divider"), { scaleX: 0, opacity: 0, duration: 0.15 }, 0.55);
+      F(tl, q(panel, ".credit"), { opacity: 0, duration: 0.15 }, 0.65);
+      tl.to({}, { duration: 0.25 }); // hold penutup
     },
   };
 
@@ -186,43 +262,53 @@ window.WeddingFX = (function () {
     if (built) return;
     built = true;
 
-    var secs = q(document, ".story .panel");
+    var scenes = q(document, ".story .scene");
 
-    secs.forEach(function (sec, i) {
-      // Kata dekoratif melayang berlawanan arah scroll (parallax dalam)
-      var decor = sec.querySelector(".slide-decor");
+    scenes.forEach(function (scene, i) {
+      var panel = scene.querySelector(".panel");
+
+      // Kata dekoratif raksasa melayang sepanjang scene (parallax dalam)
+      var decor = panel.querySelector(".slide-decor");
       if (decor) {
-        gsap.fromTo(decor, { y: "38vh" }, {
-          y: "-38vh", ease: "none",
-          scrollTrigger: { trigger: sec, start: "top bottom", end: "bottom top", scrub: true },
+        gsap.fromTo(decor, { y: "26vh" }, {
+          y: "-40vh", ease: "none",
+          scrollTrigger: { trigger: scene, start: "top bottom", end: "bottom top", scrub: true },
         });
       }
 
-      // Fase keluar: konten melayang naik & meredup saat section ditinggalkan
-      if (i < secs.length - 1) {
-        gsap.to(sec.querySelector(".slide-inner"), {
-          yPercent: -22, opacity: 0.15, ease: "power1.in",
-          scrollTrigger: { trigger: sec, start: "bottom 92%", end: "bottom 35%", scrub: 0.4 },
-        });
-      }
-
-      // Fase masuk (hero tidak: dia dapat intro sinematik saat cover dibuka)
-      if (enter[i]) {
-        enter[i](gsap.timeline({
+      // Fase masuk
+      if (slideIn[i]) {
+        slideIn[i](gsap.timeline({
           defaults: { ease: "power3.out" },
-          scrollTrigger: { trigger: sec, start: "top 90%", end: "top 20%", scrub: 0.4 },
-        }), sec);
+          scrollTrigger: { trigger: scene, start: "top bottom", end: "top top", scrub: 0.4 },
+        }), panel);
+      }
+
+      // Fase pinned (hold berakhir saat scene berikutnya mulai menutup)
+      if (pinned[i]) {
+        var endPos = i === scenes.length - 1 ? "bottom bottom" : "bottom 200%";
+        pinned[i](gsap.timeline({
+          defaults: { ease: "power2.out" },
+          scrollTrigger: {
+            trigger: scene, start: "top top", end: endPos,
+            scrub: 0.4, invalidateOnRefresh: true,
+          },
+        }), panel);
+      }
+
+      // Fase ditinggalkan: panel lama tenggelam saat scene ini menutupinya
+      if (i > 0) {
+        var prevPanel = scenes[i - 1].querySelector(".panel");
+        var prevInner = prevPanel.querySelector(".slide-inner");
+        var lt = gsap.timeline({
+          scrollTrigger: { trigger: scene, start: "top bottom", end: "top top", scrub: 0.3 },
+        });
+        lt.fromTo(prevInner, { scale: 1, yPercent: 0 },
+          { scale: 0.9, yPercent: -5, ease: "none", immediateRender: false }, 0);
+        lt.fromTo(prevPanel, { "--dim": 0 },
+          { "--dim": 0.55, ease: "none", immediateRender: false }, 0);
       }
     });
-
-    // Hint scroll di hero memudar begitu mulai bergerak
-    var hint = document.querySelector(".swipe-hint");
-    if (hint) {
-      gsap.to(hint, {
-        opacity: 0, y: 30, ease: "none",
-        scrollTrigger: { trigger: secs[0], start: "top top", end: "20% top", scrub: true },
-      });
-    }
   }
 
   /* ---------- Intro hero (sekali, saat tirai terbuka) ---------- */
@@ -243,7 +329,7 @@ window.WeddingFX = (function () {
     tl.from(nameTargets, { yPercent: 130, opacity: 0, rotation: 6, duration: 1.1, stagger: 0.14, ease: "back.out(1.7)" }, 0.55);
     tl.from(q(slide, ".gold-divider"), { scaleX: 0, opacity: 0, duration: 0.7, ease: "power3.out" }, 1.1);
     var dateTargets = (splits.heroDate && splits.heroDate.chars.length) ? splits.heroDate.chars : q(slide, ".hero-date");
-    tl.from(dateTargets, { yPercent: 110, duration: 0.7, stagger: 0.045, ease: "power3.out" }, 1.2);
+    tl.from(dateTargets, { opacity: 0, yPercent: 110, duration: 0.7, stagger: 0.045, ease: "power3.out" }, 1.2);
     tl.from(q(slide, ".quote"), { opacity: 0, y: 24, duration: 0.9, ease: "power2.out" }, 1.55);
     tl.from(q(slide, ".swipe-hint"), { opacity: 0, duration: 0.8 }, 1.9);
   }

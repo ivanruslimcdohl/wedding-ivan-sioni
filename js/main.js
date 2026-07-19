@@ -192,15 +192,19 @@
       $(key + "-maps").href = ev.mapsUrl;
     });
 
-    // Galeri
-    var grid = $("gallery-grid");
+    // Galeri (filmstrip horizontal)
+    var strip = $("gallery-strip");
     CFG.gallery.forEach(function (src, i) {
+      var frame = document.createElement("figure");
+      frame.className = "gframe";
       var img = document.createElement("img");
       img.src = src;
       img.alt = "Galeri foto " + (i + 1);
       img.loading = "lazy";
-      grid.appendChild(img);
+      frame.appendChild(img);
+      strip.appendChild(frame);
     });
+    $("gallery-counter").textContent = "1 / " + CFG.gallery.length;
 
     // Amplop digital
     var giftList = $("gift-list");
@@ -279,20 +283,20 @@
     }
   }
 
-  /* ---------- Navigasi section: dots + section aktif ---------- */
+  /* ---------- Navigasi scene: dots + scene aktif ---------- */
 
-  var sections = Array.prototype.slice.call(document.querySelectorAll(".story .panel"));
+  var scenes = Array.prototype.slice.call(document.querySelectorAll(".story .scene"));
   var dotsNav = $("dots");
   var dotBtns = [];
   var activeIdx = -1;
   var opened = false;
 
-  sections.forEach(function (sec, i) {
+  scenes.forEach(function (scene, i) {
     var b = document.createElement("button");
     b.type = "button";
     b.setAttribute("aria-label", "Ke bagian " + (i + 1));
     b.addEventListener("click", function () {
-      sec.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
+      scene.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
     });
     dotsNav.appendChild(b);
     dotBtns.push(b);
@@ -306,21 +310,27 @@
 
     window.WeddingParticles.boostUp();
     if (navigator.vibrate) navigator.vibrate(8);
-    // Burst emas menyambut section penutup
-    if (i === sections.length - 1) {
+    // Burst emas menyambut scene penutup
+    if (i === scenes.length - 1) {
       window.WeddingParticles.burst(window.innerWidth / 2, window.innerHeight * 0.32);
     }
   }
 
-  // Section dianggap aktif saat melewati pita tengah layar
+  /* Scene aktif = scene teratas yang panelnya sedang tampil.
+     Karena scene saling tumpang-tindih (margin negatif), IO band tengah
+     bisa memuat >1 scene — pilih yang indeksnya TERBESAR yang intersect. */
+  var visible = [];
   var io = new IntersectionObserver(function (entries) {
     entries.forEach(function (en) {
-      var i = sections.indexOf(en.target);
+      var i = scenes.indexOf(en.target);
       en.target.classList.toggle("in-view", en.isIntersecting);
-      if (en.isIntersecting) setActive(i);
+      visible[i] = en.isIntersecting;
     });
-  }, { rootMargin: "-40% 0px -40% 0px", threshold: 0 });
-  sections.forEach(function (s) { io.observe(s); });
+    for (var i = scenes.length - 1; i >= 0; i--) {
+      if (visible[i]) { setActive(i); break; }
+    }
+  }, { rootMargin: "-45% 0px -45% 0px", threshold: 0 });
+  scenes.forEach(function (s) { io.observe(s); });
 
   /* ---------- Progress bar scroll ---------- */
 

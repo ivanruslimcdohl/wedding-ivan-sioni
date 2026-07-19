@@ -26,7 +26,6 @@
 [hidden] { display: none !important; }
 
 html {
-  scroll-snap-type: y proximity;
   overscroll-behavior-y: none;
 }
 
@@ -288,21 +287,58 @@ body.locked .scroll-progress { opacity: 0; }
   max-width: 480px;
   margin-inline: auto;
   position: relative;
-  /* Gradasi membentang sepanjang dokumen — warna berubah seiring scroll */
-  background: linear-gradient(180deg,
-    #0e4a37 0%, #0b3d2e 16%, #093c44 36%,
-    #061f17 54%, #0c4030 74%, #04140f 100%);
+  background: var(--emerald-950);
 }
 
+/* ---------- Scene stack: panel sticky, scene berikutnya menutupi ----------
+   Tiap .scene lebih tinggi dari layar; .panel di dalamnya menempel (sticky)
+   selama sisa scene discroll — rentang itulah timeline animasi scrub-nya.
+   margin-top negatif membuat scene berikutnya menggeser naik MENUTUPI
+   panel yang sedang menempel (efek kartu bertumpuk). */
+
+.scene {
+  position: relative;
+  height: 270svh; /* default: 100 panel + 70 hold + 100 tertutup */
+}
+.scene + .scene { margin-top: -100svh; }
+
+.scene-hero { height: 300svh; }
+.scene-couple { height: 280svh; }
+.scene-event { height: 270svh; }
+.scene-countdown { height: 250svh; }
+.scene-gallery { height: 450svh; }
+.scene-gift { height: 270svh; }
+.scene-closing { height: 200svh; } /* terakhir: tanpa jatah tertutup */
+
+/* Urutan tumpukan: scene belakangan selalu di atas */
+.scene:nth-child(1) { z-index: 1; }
+.scene:nth-child(2) { z-index: 2; }
+.scene:nth-child(3) { z-index: 3; }
+.scene:nth-child(4) { z-index: 4; }
+.scene:nth-child(5) { z-index: 5; }
+.scene:nth-child(6) { z-index: 6; }
+.scene:nth-child(7) { z-index: 7; }
+.scene:nth-child(8) { z-index: 8; }
+
 .panel {
-  min-height: 100svh;
+  position: sticky;
+  top: 0;
+  height: 100svh;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  position: relative;
-  scroll-snap-align: start;
 }
+
+/* Panel wajib opaque — dia akan ditutupi & menutupi panel lain */
+.slide-hero { background: linear-gradient(180deg, #0e4a37, #0b3d2e 70%, #093226); }
+.slide-couple { background: linear-gradient(180deg, #0b3d2e, #0a4437 70%, #083326); }
+.slide-event { background: linear-gradient(180deg, #093c44, #0a3540 70%, #062a30); }
+.slide-countdown { background: linear-gradient(180deg, #072b20, #061f17 70%, #05170f); }
+.slide-gallery { background: linear-gradient(180deg, #04140f, #061f17 70%, #04140f); }
+.slide-rsvp { background: linear-gradient(180deg, #0c4030, #0b3d2e 70%, #093226); }
+.slide-gift { background: linear-gradient(180deg, #0b3d2e, #0e4a37 70%, #0a3a2b); }
+.slide-closing { background: linear-gradient(180deg, #093226, #04140f 70%, #02120c); }
 
 .panel::before {
   content: "";
@@ -310,6 +346,29 @@ body.locked .scroll-progress { opacity: 0; }
   inset: 0;
   background: radial-gradient(ellipse 120% 60% at 50% 0%, rgba(4, 106, 56, 0.22), transparent 60%);
   pointer-events: none;
+}
+
+/* Overlay gelap saat panel "ditinggalkan" (di-scrub GSAP via --dim) */
+.panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #02120c;
+  opacity: var(--dim, 0);
+  pointer-events: none;
+  z-index: 6;
+}
+
+/* RSVP: mengalir normal (form harus nyaman + konten bisa tinggi) */
+.scene-rsvp {
+  height: auto;
+  padding-bottom: 90svh; /* zona yang akan ditutupi scene berikutnya */
+  background: linear-gradient(180deg, #0c4030, #093226);
+}
+.scene-rsvp .panel {
+  position: static;
+  height: auto;
+  min-height: 100svh;
 }
 
 .slide-inner {
@@ -324,9 +383,9 @@ body.locked .scroll-progress { opacity: 0; }
   z-index: 1;
 }
 
-/* Entrance fallback (tanpa GSAP / reduced-motion): jalan saat section terlihat */
+/* Entrance fallback (tanpa GSAP / reduced-motion): jalan saat scene terlihat */
 .panel .anim { opacity: 0; }
-.panel.in-view .anim {
+.scene.in-view .anim {
   animation: riseIn 0.85s cubic-bezier(0.2, 0.7, 0.3, 1) both;
   animation-delay: var(--d, 0s);
 }
@@ -586,30 +645,53 @@ body.locked .dots { opacity: 0; pointer-events: none; }
   0%, 100% { box-shadow: 0 4px 22px rgba(212, 175, 55, 0.35); }
   50% { box-shadow: 0 4px 34px rgba(212, 175, 55, 0.75); }
 }
-body.gsap-on .slide-countdown.in-view .btn-gold {
+body.gsap-on .scene-countdown.in-view .btn-gold {
   animation: glowPulse 2.2s ease-in-out infinite;
 }
 
-/* ---------- Galeri ---------- */
+/* ---------- Galeri: filmstrip horizontal ---------- */
 
-.gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  width: 100%;
-  max-width: 360px;
+.gallery-viewport {
+  width: 100vw;
+  max-width: 480px;
+  margin-inline: calc(-1 * clamp(1.2rem, 5vw, 2rem));
+  overflow: hidden;
 }
-.gallery-grid img {
-  width: 100%;
-  aspect-ratio: 3 / 4;
-  object-fit: cover;
-  border-radius: 12px;
+/* Tanpa GSAP: strip bisa digeser manual */
+body:not(.gsap-on) .gallery-viewport { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+.gallery-strip {
+  display: flex;
+  align-items: center;
+  gap: 4vw;
+  padding-inline: 12vw;
+  width: max-content;
+  will-change: transform;
+}
+
+.gframe {
+  flex: 0 0 auto;
+  width: min(76vw, 350px);
+  height: min(58svh, 480px);
+  border-radius: 16px;
   border: 1px solid var(--gold-border);
+  overflow: hidden;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+  background: var(--card);
+}
+.gframe img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   display: block;
 }
-.gallery-grid img:first-child {
-  grid-column: span 2;
-  aspect-ratio: 16 / 10;
+
+.gallery-counter {
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  letter-spacing: 0.3em;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
 }
 
 /* ---------- Amplop digital ---------- */
@@ -663,10 +745,10 @@ body.gsap-on .slide-countdown.in-view .btn-gold {
   background: linear-gradient(90deg, transparent, rgba(243, 229, 171, 0.26), transparent);
   pointer-events: none;
 }
-body.gsap-on .slide-gift.in-view .gift-card::after {
+body.gsap-on .scene-gift.in-view .gift-card::after {
   animation: sheen 1.4s 0.5s ease-in-out both;
 }
-body.gsap-on .slide-gift.in-view .gift-card:nth-child(2)::after {
+body.gsap-on .scene-gift.in-view .gift-card:nth-child(2)::after {
   animation-delay: 0.8s;
 }
 @keyframes sheen {
@@ -946,5 +1028,8 @@ body.gsap-on .cover { background: none; }
   #particles { display: none; }
   .ambient { display: none; }
   .slide-decor { display: none; }
-  html { scroll-snap-type: none; }
+  /* Halaman mengalir sederhana tanpa scene panjang */
+  .scene { height: auto !important; margin-top: 0 !important; padding-bottom: 0 !important; }
+  .panel { position: relative; height: auto; min-height: 100svh; }
+  .gallery-viewport { overflow-x: auto; }
 }
