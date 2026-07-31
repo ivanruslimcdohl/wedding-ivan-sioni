@@ -168,6 +168,29 @@ body.locked {
   pointer-events: none;
 }
 
+/* ---------- Cincin emas penyerta perjalanan scroll ---------- */
+
+#ring-travelers {
+  position: fixed;
+  inset: 0;
+  max-width: 480px;
+  margin-inline: auto;
+  z-index: 21;
+  pointer-events: none;
+}
+body.locked #ring-travelers { opacity: 0; }
+.rt {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 26px;
+  height: 26px;
+  border: 2.5px solid var(--gold);
+  border-radius: 50%;
+  opacity: 0;
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.45), inset 0 0 6px rgba(243, 229, 171, 0.4);
+}
+
 /* ---------- Cover / gate ---------- */
 
 .cover {
@@ -312,6 +335,26 @@ body.locked .scroll-ring { opacity: 0; }
   50% { opacity: 0.35; box-shadow: 0 0 6px 2px rgba(243, 229, 171, 0.4); }
 }
 
+/* Hati yang terbang dari mempelai pria ke wanita (kejutan sekali) */
+.love-drift {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 25;
+  color: #e8a1a4;
+  font-size: 19px;
+  pointer-events: none;
+  text-shadow: 0 0 10px rgba(232, 161, 164, 0.8);
+}
+
+/* Bintang jatuh: kunang-kunang berekor melesat diagonal */
+.shooting-star {
+  width: 5px;
+  height: 5px;
+  box-shadow: 0 0 10px 3px rgba(243, 229, 171, 0.8), -18px -7px 16px 2px rgba(243, 229, 171, 0.35), -34px -13px 20px 1px rgba(243, 229, 171, 0.15);
+  animation: none;
+}
+
 /* Not musik melayang dari tombol musik */
 .music-note {
   position: fixed;
@@ -348,9 +391,9 @@ body.locked .scroll-ring { opacity: 0; }
 .scene-couple { height: 280svh; }
 .scene-event { height: 270svh; }
 .scene-countdown { height: 250svh; }
-.scene-gallery { height: 450svh; }
+.scene-gallery { height: 380svh; } /* naikkan ke ~450 saat foto asli terpasang */
 .scene-gift { height: 270svh; }
-.scene-closing { height: 200svh; } /* terakhir: tanpa jatah tertutup */
+.scene-closing { height: 500svh; } /* terakhir (bebas dari kontrak "bottom 200%"): finale panjang */
 
 /* Urutan tumpukan: scene belakangan selalu di atas */
 .scene:nth-child(1) { z-index: 1; }
@@ -401,6 +444,44 @@ body.locked .scroll-ring { opacity: 0; }
   z-index: 6;
 }
 
+/* ---------- Ornamen transisi antar scene (di-scrub GSAP) ---------- */
+
+/* Kilatan cahaya emas saat panel "ditembus" (iris hero, film gate countdown) */
+.flash-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 7; /* di atas overlay --dim (z 6) */
+  opacity: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 90% 70% at 50% 45%, rgba(243, 229, 171, 0.95), rgba(212, 175, 55, 0.55) 55%, transparent 80%);
+}
+
+.wipe-edge {
+  position: absolute;
+  z-index: 7;
+  opacity: 0;
+  pointer-events: none;
+}
+/* Garis belah vertikal saat tirai panel acara membelah */
+.slide-event .wipe-edge {
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  margin-left: -1px;
+  background: linear-gradient(180deg, transparent, var(--gold-light) 30%, var(--gold-light) 70%, transparent);
+  box-shadow: 0 0 18px 4px rgba(243, 229, 171, 0.5);
+}
+/* Cakrawala emas di tepi atas RSVP (panel statis — menempel ke scene) */
+.slide-rsvp .wipe-edge {
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold) 18%, var(--gold-light) 50%, var(--gold) 82%, transparent);
+  box-shadow: 0 0 16px 3px rgba(243, 229, 171, 0.45);
+}
+
 /* RSVP: mengalir normal (form harus nyaman + konten bisa tinggi) */
 .scene-rsvp {
   height: auto;
@@ -408,7 +489,7 @@ body.locked .scroll-ring { opacity: 0; }
   background: linear-gradient(180deg, #0c4030, #093226);
 }
 .scene-rsvp .panel {
-  position: static;
+  position: relative; /* non-sticky, tapi jadi anchor .rsvp-hearts & .wipe-edge */
   height: auto;
   min-height: 100svh;
 }
@@ -531,6 +612,21 @@ body.locked .dots { opacity: 0; pointer-events: none; }
   color: var(--gold);
 }
 
+/* Cahaya emas di belakang hero — mengembang saat kamera "menembus" monogram */
+.hero-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(90vw, 420px);
+  height: min(90vw, 420px);
+  margin: calc(min(90vw, 420px) / -2) 0 0 calc(min(90vw, 420px) / -2);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(243, 229, 171, 0.5), rgba(212, 175, 55, 0.22) 45%, transparent 70%);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
 /* ---------- Mempelai ---------- */
 
 .person { display: flex; flex-direction: column; align-items: center; gap: 0.35rem; }
@@ -543,6 +639,26 @@ body.locked .dots { opacity: 0; pointer-events: none; }
   background: conic-gradient(from 120deg, var(--gold-deep), var(--gold-light), var(--gold), var(--gold-deep));
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
   margin-bottom: 0.4rem;
+  position: relative;
+}
+
+/* Titik emas yang menelusuri cincin foto saat clip membuka (di-scrub GSAP) */
+.photo-ring .orbit {
+  position: absolute;
+  inset: -4px;
+  pointer-events: none;
+  opacity: 0;
+}
+.photo-ring .orbit-dot {
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  width: 9px;
+  height: 9px;
+  margin-left: -4.5px;
+  border-radius: 50%;
+  background: var(--gold-light);
+  box-shadow: 0 0 12px 3px rgba(243, 229, 171, 0.8);
 }
 .photo-ring img {
   width: 100%;
@@ -616,6 +732,26 @@ body.locked .dots { opacity: 0; pointer-events: none; }
   pointer-events: none;
 }
 
+/* Bingkai emas yang menggambar dirinya keliling kartu (stroke di-scrub) */
+.card-trace {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 1.6;
+  pointer-events: none;
+  overflow: visible;
+}
+
+/* Benang emas penghubung kedua kartu acara */
+.event-thread {
+  width: 1px;
+  height: clamp(18px, 3vh, 34px);
+  background: linear-gradient(180deg, var(--gold), rgba(212, 175, 55, 0.15));
+}
+
 .event-name {
   font-family: var(--font-script);
   font-weight: 400;
@@ -639,6 +775,49 @@ body.locked .dots { opacity: 0; pointer-events: none; }
 .event-card .btn-outline { margin-top: 0.7rem; }
 
 /* ---------- Countdown ---------- */
+
+/* Angka hari raksasa ber-outline di kedalaman (parallax di-scrub GSAP) */
+.count-ghost {
+  /* Center via flex, bukan transform — transform milik GSAP (parallax scrub) */
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 0;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: clamp(11rem, 60vw, 16rem);
+  line-height: 1;
+  color: rgba(212, 175, 55, 0.05);
+  pointer-events: none;
+  user-select: none;
+}
+@supports (-webkit-text-stroke: 1px #000) {
+  .count-ghost {
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(212, 175, 55, 0.22);
+  }
+}
+
+/* Denyut cincin waktu di belakang kotak countdown */
+.time-rings {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 0;
+  pointer-events: none;
+}
+.time-rings i {
+  position: absolute;
+  width: clamp(220px, 70vw, 320px);
+  height: clamp(220px, 70vw, 320px);
+  top: calc(clamp(220px, 70vw, 320px) / -2);
+  left: calc(clamp(220px, 70vw, 320px) / -2);
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  border-radius: 50%;
+  opacity: 0;
+}
 
 .countdown { display: flex; gap: 0.6rem; margin: 0.4rem 0 0.6rem; }
 
@@ -709,6 +888,7 @@ body:not(.gsap-on) .gallery-viewport { overflow-x: auto; -webkit-overflow-scroll
   padding-inline: 12vw;
   width: max-content;
   will-change: transform;
+  perspective: 900px; /* cover-flow: frame samping menghadap ke tengah */
 }
 
 .gframe {
@@ -800,6 +980,28 @@ body.gsap-on .scene-gift.in-view .gift-card:nth-child(2)::after {
 
 /* ---------- RSVP & ucapan ---------- */
 
+/* Dua hati emas melayang pelan di belakang form */
+.rsvp-hearts {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.rsvp-hearts span {
+  position: absolute;
+  color: var(--gold);
+  opacity: 0.12;
+  font-size: 2.2rem;
+  animation: heartDrift 11s ease-in-out infinite;
+}
+.rsvp-hearts span:first-child { left: 8%; top: 18%; }
+.rsvp-hearts span:last-child { right: 10%; top: 55%; font-size: 1.6rem; animation-delay: -5.5s; animation-duration: 14s; }
+@keyframes heartDrift {
+  0%, 100% { transform: translateY(0) rotate(-6deg); }
+  50% { transform: translateY(-34px) rotate(8deg); }
+}
+
 .rsvp-inner {
   padding-top: clamp(2.5rem, 9vh, 4rem);
   padding-bottom: clamp(2.5rem, 9vh, 4rem);
@@ -838,7 +1040,10 @@ body.gsap-on .scene-gift.in-view .gift-card:nth-child(2)::after {
 .rsvp-form textarea::placeholder { color: rgba(247, 243, 232, 0.45); }
 .rsvp-form input:focus,
 .rsvp-form select:focus,
-.rsvp-form textarea:focus { border-color: var(--gold); }
+.rsvp-form textarea:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 16px rgba(212, 175, 55, 0.28);
+}
 .rsvp-form textarea { resize: none; }
 
 .rsvp-row { display: flex; gap: 0.6rem; }
@@ -903,7 +1108,85 @@ body.gsap-on .scene-gift.in-view .gift-card:nth-child(2)::after {
   padding: 0.8rem 0;
 }
 
-/* ---------- Penutup ---------- */
+/* ---------- Penutup: grand finale "Langit Berbintang" ---------- */
+
+.finale-sky {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.night-veil {
+  position: absolute;
+  inset: 0;
+  background: #01100a;
+  opacity: 0;
+}
+
+/* Dua layer bintang murah: tile radial-gradient berulang; kelip = animasi
+   opacity CSS yang berosilasi di sekitar nilai scrub GSAP */
+.stars {
+  position: absolute;
+  inset: -15% 0 -15% 0; /* lebih tinggi dari panel: drift parallax tanpa celah */
+  opacity: 0;
+  background-repeat: repeat;
+}
+.stars-a {
+  background-image:
+    radial-gradient(1.6px 1.6px at 23px 31px, rgba(243, 229, 171, 0.95) 50%, transparent 51%),
+    radial-gradient(1px 1px at 71px 89px, rgba(247, 243, 232, 0.8) 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 104px 22px, rgba(243, 229, 171, 0.7) 50%, transparent 51%);
+  background-size: 132px 118px;
+}
+.stars-b {
+  background-image:
+    radial-gradient(2px 2px at 41px 63px, rgba(243, 229, 171, 0.9) 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 137px 141px, rgba(247, 243, 232, 0.75) 50%, transparent 51%),
+    radial-gradient(1px 1px at 88px 172px, rgba(212, 175, 55, 0.8) 50%, transparent 51%);
+  background-size: 189px 201px;
+}
+.finale-sky.twinkling .stars-a { animation: twinkle 3.4s ease-in-out infinite; }
+.finale-sky.twinkling .stars-b { animation: twinkle 4.3s ease-in-out infinite reverse; }
+@keyframes twinkle { 50% { opacity: 0.55; } }
+
+.constellation {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: min(78vw, 330px);
+  height: auto;
+  transform: translate(-50%, -50%); /* GSAP hanya menyentuh anak-anaknya */
+  overflow: visible;
+}
+.c-heart {
+  stroke: rgba(243, 229, 171, 0.75);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+}
+.c-star {
+  fill: #f3e5ab;
+  filter: drop-shadow(0 0 4px rgba(243, 229, 171, 0.9)); /* statis, tak dianimasikan */
+}
+.c-ring { stroke: var(--gold); stroke-width: 0.9; }
+.c-ring-inner { stroke: rgba(212, 175, 55, 0.4); }
+.c-mono {
+  font-family: var(--font-serif);
+  font-size: 17px;
+  letter-spacing: 2px;
+  fill: var(--gold);
+}
+.c-amp { font-family: var(--font-script); font-size: 12px; fill: var(--gold-light); }
+
+.finale-names,
+.finale-thanks {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+}
+.finale-thanks { margin-top: 0.6rem; }
 
 .closing-sign {
   font-family: var(--font-serif);
@@ -1059,6 +1342,18 @@ body.gsap-on .cover { background: none; }
   fill: var(--gold-light);
 }
 
+/* ---------- Mode lite (perangkat kelas bawah) ---------- */
+
+body.lite .event-card,
+body.lite .count-box,
+body.lite .gift-card,
+body.lite .music-btn { backdrop-filter: none; }
+body.lite .event-card,
+body.lite .count-box,
+body.lite .gift-card { background: rgba(6, 31, 23, 0.85); }
+body.lite .stars-b { display: none; }
+body.lite .light-ray { display: none; }
+
 /* ---------- Reduced motion ---------- */
 
 @media (prefers-reduced-motion: reduce) {
@@ -1070,6 +1365,9 @@ body.gsap-on .cover { background: none; }
   #particles { display: none; }
   .ambient { display: none; }
   .slide-decor { display: none; }
+  .count-ghost, .time-rings, .hero-glow, .rsvp-hearts,
+  .flash-veil, .wipe-edge, .photo-ring .orbit,
+  .night-veil, .stars, #ring-travelers { display: none; }
   /* Halaman mengalir sederhana tanpa scene panjang */
   .scene { height: auto !important; margin-top: 0 !important; padding-bottom: 0 !important; }
   .panel { position: relative; height: auto; min-height: 100svh; }
