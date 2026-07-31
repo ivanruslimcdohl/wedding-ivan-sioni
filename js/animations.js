@@ -32,6 +32,12 @@ window.WeddingFX = (function () {
     return 2 * Math.PI * parseFloat(c.getAttribute("r"));
   }
 
+  // Panjang goresan SVG diukur langsung (pathLength attr tidak konsisten
+  // antar versi WebKit — bisa tampak sebagai garis putus-putus)
+  function strokeLen(el) {
+    try { return el.getTotalLength(); } catch (e) { return 0; }
+  }
+
   /* Semua tween scrub memakai fromTo eksplisit (kedua ujung ditulis,
      tidak ada perekaman nilai otomatis yang bisa meleset saat refresh).
      F  : tersembunyi → normal (build-in). immediateRender agar elemen
@@ -161,9 +167,8 @@ window.WeddingFX = (function () {
           }
         });
       }, 0.3);
-      // Eyebrow meregang ala tipografi Apple, bukan sekadar pudar
-      tl.fromTo(q(panel, ".eyebrow"), { letterSpacing: "0.35em", opacity: 1, y: 0 },
-        { letterSpacing: "0.9em", opacity: 0, y: -40, duration: 0.3, ease: "power1.in", immediateRender: false }, 0.1);
+      // (letterSpacing sengaja TIDAK di-scrub — memicu reflow tiap frame)
+      T(tl, q(panel, ".eyebrow"), { opacity: 0, y: -40, duration: 0.3, ease: "power1.in" }, 0.1);
       var words = (splits.heroName && splits.heroName.words.length) ? splits.heroName.words : q(panel, ".script-name");
       T(tl, words, {
         y: function (i) { return -(120 + i * 70); },
@@ -234,8 +239,9 @@ window.WeddingFX = (function () {
         }, at);
         // Bingkai emas menggambar dirinya setelah kartu mendarat
         var trace = card.querySelector(".card-trace rect");
-        if (trace) {
-          tl.fromTo(trace, { strokeDasharray: 1, strokeDashoffset: 1 },
+        var traceLen = trace ? strokeLen(trace) : 0;
+        if (traceLen) {
+          tl.fromTo(trace, { strokeDasharray: traceLen, strokeDashoffset: traceLen },
             { strokeDashoffset: 0, duration: 0.24, ease: "none", immediateRender: true }, at + 0.12);
         }
         F(tl, q(card, ".event-name, .event-time, .event-venue, .event-address"),
@@ -389,8 +395,9 @@ window.WeddingFX = (function () {
       // dirinya menyambungkan mereka, monogram menyala di tengahnya
       F(tl, q(panel, ".c-star"), { scale: 0, opacity: 0, transformOrigin: "50% 50%", duration: 0.1, stagger: 0.015, ease: "back.out(2)" }, 0.26);
       var heart = panel.querySelector(".c-heart");
-      if (heart) {
-        tl.fromTo(heart, { strokeDasharray: 1, strokeDashoffset: 1 },
+      var heartLen = heart ? strokeLen(heart) : 0;
+      if (heartLen) {
+        tl.fromTo(heart, { strokeDasharray: heartLen, strokeDashoffset: heartLen },
           { strokeDashoffset: 0, ease: "none", immediateRender: true, duration: 0.16 }, 0.35);
       }
       q(panel, ".c-ring").forEach(function (c, i) {
@@ -463,26 +470,16 @@ window.WeddingFX = (function () {
     window.dispatchEvent(new CustomEvent("wedding:finale", { detail: {} }));
   }
 
-  var supportsConic = window.CSS && CSS.supports &&
-    (CSS.supports("mask-image", "conic-gradient(#000, #000)") ||
-     CSS.supports("-webkit-mask-image", "conic-gradient(#000, #000)"));
-  var supportsLinearMask = window.CSS && CSS.supports &&
-    (CSS.supports("mask-image", "linear-gradient(#000, #000)") ||
-     CSS.supports("-webkit-mask-image", "linear-gradient(#000, #000)"));
-
-  var SWEEP_MASK = "conic-gradient(from 0deg at 50% 50%, #000 calc(var(--sweep) * 1deg), transparent 0deg)";
-  var SHEEN_MASK = "linear-gradient(105deg, #000 calc(var(--sw) * 1% - 12%), transparent calc(var(--sw) * 1%))";
-
-  function setMask(panel, img) {
-    gsap.set(panel, { webkitMaskImage: img, maskImage: img });
-  }
+  /* Catatan v2: clip/mask layar penuh + "hold" (panel ditahan diam via
+     counter-translate) DIHAPUS — di iOS (toolbar muncul-hilang) jarak
+     scroll transisi tak lagi sama dengan tinggi panel svh, sehingga panel
+     tampak bergeser & melompat. Signature kini murni efek per-elemen:
+     aman di semua perangkat, mekanik tumpukan sticky tetap jadi wipe-nya. */
 
   var transitions = {
-    // hero → mempelai : IRIS APERTURE — lanjutan kamera zoom-through;
-    // hero membesar & memutih, panel mempelai membuka seperti diafragma
+    // hero → mempelai : BLOOM — lanjutan kamera zoom-through; hero
+    // membesar & memutih oleh kilatan cahaya emas
     1: {
-      clip: ["circle(0% at 50% 45%)", "circle(142% at 50% 45%)"],
-      hold: true,
       out: function (tl, prevPanel, prevInner) {
         tl.fromTo(prevInner, { scale: 1 }, { scale: 1.15, ease: "none", immediateRender: false, duration: 1 }, 0);
         var veil = prevPanel.querySelector(".flash-veil");
@@ -493,10 +490,9 @@ window.WeddingFX = (function () {
       },
     },
 
-    // mempelai → acara : TIRAI MEMBELAH — gema tirai emas pembuka
+    // mempelai → acara : SEAM — garis belah emas menyala di panel acara
+    // yang naik, gema tirai pembuka; panel lama bergeser miring
     2: {
-      clip: ["inset(0 50% 0 50%)", "inset(0 0% 0 0%)"],
-      hold: true,
       out: function (tl, prevPanel, prevInner) {
         tl.fromTo(prevInner, { xPercent: 0, scale: 1 },
           { xPercent: -6, scale: 0.94, ease: "none", immediateRender: false, duration: 1 }, 0);
@@ -504,32 +500,22 @@ window.WeddingFX = (function () {
       },
       build: function (tl, panel) {
         var seam = panel.querySelector(".wipe-edge");
-        if (seam) tl.fromTo(seam, { opacity: 1 }, { opacity: 0, ease: "power1.out", immediateRender: false, duration: 0.5 }, 0.15);
+        if (seam) tl.fromTo(seam, { opacity: 1 }, { opacity: 0, ease: "power1.out", immediateRender: false, duration: 0.6 }, 0.2);
       },
     },
 
-    // acara → countdown : CLOCK WIPE — sapuan jarum jam (mask conic),
-    // kartu acara rebah menjauh; fallback tanpa mask bila tak didukung
+    // acara → countdown : TILT AWAY — kartu acara rebah menjauh ke dalam
     3: {
-      hold: supportsConic,
       out: function (tl, prevPanel, prevInner) {
         defaultOut(tl, prevPanel, prevInner);
         tl.fromTo(q(prevPanel, ".event-card"), { rotationX: 0 },
           { rotationX: -26, transformOrigin: "50% 100%", transformPerspective: 900,
             ease: "none", immediateRender: false, duration: 1, stagger: 0.08 }, 0);
       },
-      build: supportsConic ? function (tl, panel) {
-        setMask(panel, SWEEP_MASK);
-        tl.fromTo(panel, { "--sweep": 0 }, { "--sweep": 360, ease: "none", immediateRender: true, duration: 1 }, 0);
-      } : null,
-      unmount: supportsConic ? function (panel) { setMask(panel, "none"); } : null,
-      remount: supportsConic ? function (panel) { gsap.set(panel, { "--sweep": 360 }); setMask(panel, SWEEP_MASK); } : null,
     },
 
-    // countdown → galeri : FILM GATE — kilatan emas + tarikan filmstrip
+    // countdown → galeri : FILM GATE — kilatan emas menyilaukan sejenak
     4: {
-      clip: ["inset(0 0 0 100%)", "inset(0 0% 0 0%)"],
-      hold: true,
       out: function (tl, prevPanel, prevInner) {
         defaultOut(tl, prevPanel, prevInner);
         var veil = prevPanel.querySelector(".flash-veil");
@@ -541,7 +527,7 @@ window.WeddingFX = (function () {
     },
 
     // galeri → RSVP : GOLD HORIZON — paling kalem (form menyusul);
-    // panel RSVP statis, jadi tanpa clip — hanya bar emas menyala di tepinya
+    // bar emas menyala di tepi atas panel RSVP lalu memudar
     5: {
       out: function (tl, prevPanel, prevInner) {
         tl.fromTo(prevInner, { x: 0, scale: 1 },
@@ -557,17 +543,9 @@ window.WeddingFX = (function () {
       },
     },
 
-    // RSVP → amplop : SHEEN WIPE — tersapu kilau emas miring + percikan koin
+    // RSVP → amplop : percikan koin menyambut amplop digital
     6: {
-      hold: supportsLinearMask,
-      out: function (tl, prevPanel, prevInner) {
-        defaultOut(tl, prevPanel, prevInner);
-      },
-      build: function (tl, panel) {
-        if (supportsLinearMask) {
-          setMask(panel, SHEEN_MASK);
-          tl.fromTo(panel, { "--sw": 0 }, { "--sw": 130, ease: "none", immediateRender: true, duration: 1 }, 0);
-        }
+      build: function (tl) {
         tl.add(function () {
           onceFx("t6-coin", function () {
             if (window.WeddingParticles) {
@@ -576,8 +554,6 @@ window.WeddingFX = (function () {
           });
         }, 0.55);
       },
-      unmount: supportsLinearMask ? function (panel) { setMask(panel, "none"); } : null,
-      remount: supportsLinearMask ? function (panel) { gsap.set(panel, { "--sw": 130 }); setMask(panel, SHEEN_MASK); } : null,
     },
 
     // amplop → penutup : NIGHTFALL — dunia meredup; ini stage 0 finale.
@@ -604,32 +580,11 @@ window.WeddingFX = (function () {
       scrollTrigger: {
         trigger: scene, start: "top bottom", end: "top top",
         scrub: 0.3, invalidateOnRefresh: true,
-        onEnterBack: function () {
-          if (spec.clip) gsap.set(panel, { clipPath: spec.clip[1] });
-          if (spec.remount) spec.remount(panel);
-        },
       },
     });
 
     (spec.out || defaultOut)(tl, prevPanel, prevInner);
-
-    if (spec.clip) {
-      tl.fromTo(panel, { clipPath: spec.clip[0] },
-        { clipPath: spec.clip[1], ease: "none", immediateRender: true, duration: 1 }, 0);
-    }
-    if (spec.hold) {
-      // Tahan panel diam memenuhi layar selama wipe; berakhir tepat di
-      // posisi natural (y:0) sehingga menyambung mulus ke fase sticky
-      tl.fromTo(panel, { y: function () { return -panel.offsetHeight; } },
-        { y: 0, ease: "none", immediateRender: true, duration: 1 }, 0);
-    }
     if (spec.build) spec.build(tl, panel, prevPanel);
-
-    // Lepas clip/mask hanya setelah scrub benar-benar tuntas (hemat GPU)
-    tl.eventCallback("onComplete", function () {
-      if (spec.clip) gsap.set(panel, { clipPath: "none" });
-      if (spec.unmount) spec.unmount(panel);
-    });
   }
 
   /* ---------- Build semua trigger ---------- */
