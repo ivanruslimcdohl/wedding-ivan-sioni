@@ -533,11 +533,28 @@
       } else {
         FX.initTilt();
       }
-      FX.openCover(unlockScroll);
+      try {
+        FX.openCover(unlockScroll);
+      } catch (e) {
+        // Timeline pembuka gagal → jangan pernah biarkan tamu terkunci
+        $("cover").classList.add("open");
+        unlockScroll();
+      }
     } else {
       $("cover").classList.add("open");
       unlockScroll();
     }
+
+    // Jaring pengaman: apa pun yang terjadi pada animasi pembuka,
+    // 4 detik setelah klik halaman WAJIB bisa discroll & cover minggir
+    setTimeout(function () {
+      var cover = $("cover");
+      if (document.body.classList.contains("locked")) unlockScroll();
+      if (cover && getComputedStyle(cover).display !== "none") {
+        cover.classList.add("open");
+        cover.style.pointerEvents = "none";
+      }
+    }, 4000);
 
     emit("wedding:opened", {});
   });

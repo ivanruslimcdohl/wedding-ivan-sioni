@@ -641,7 +641,20 @@ window.WeddingFX = (function () {
     var scenes = q(document, ".story .scene");
 
     scenes.forEach(function (scene, i) {
-      var panel = scene.querySelector(".panel");
+      try {
+        buildScene(scene, i, scenes);
+      } catch (e) {
+        // Satu scene gagal dibangun tidak boleh mematikan sisanya
+        if (window.console && console.warn) console.warn("Scene " + i + " gagal dibangun:", e);
+      }
+    });
+
+    try { velocityLayer(); } catch (e) { /* fitur tambahan, boleh gagal senyap */ }
+    try { ringTravelers(scenes); } catch (e) { /* fitur tambahan, boleh gagal senyap */ }
+  }
+
+  function buildScene(scene, i, scenes) {
+    var panel = scene.querySelector(".panel");
 
       // Kata dekoratif raksasa melayang sepanjang scene (parallax dalam)
       var decor = panel.querySelector(".slide-decor");
@@ -672,12 +685,8 @@ window.WeddingFX = (function () {
         }), panel);
       }
 
-      // Fase transisi: tiap batas scene punya signature wipe sendiri
-      if (i > 0) buildTransition(i, scene, panel, scenes[i - 1]);
-    });
-
-    velocityLayer();
-    ringTravelers(scenes);
+    // Fase transisi: tiap batas scene punya signature wipe sendiri
+    if (i > 0) buildTransition(i, scene, panel, scenes[i - 1]);
   }
 
   /* ---------- Cincin emas penyerta ----------
@@ -850,11 +859,16 @@ window.WeddingFX = (function () {
     }, 0.85);
     tl.to(".cover-panel-left", { xPercent: -102, duration: 1.15, ease: "power4.inOut" }, 0.95);
     tl.to(".cover-panel-right", { xPercent: 102, duration: 1.15, ease: "power4.inOut" }, 0.95);
-    // Scroll dibuka + hero masuk tepat saat tirai membelah
+    // Scroll dibuka + hero masuk tepat saat tirai membelah.
+    // Cover langsung berhenti menangkap sentuhan — display:none baru
+    // menyusul di onComplete, jadi ia tak boleh menghalangi scroll
+    tl.set(cover, { pointerEvents: "none" }, 0.95);
     tl.add(function () {
       if (onReveal) onReveal();
-      ScrollTrigger.refresh();
-      heroIntro();
+      try {
+        ScrollTrigger.refresh();
+        heroIntro();
+      } catch (e) { /* animasi gagal ≠ tamu terkunci */ }
     }, 0.95);
   }
 
