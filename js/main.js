@@ -17,12 +17,6 @@
     FX.init();
   }
 
-  // Mode ringan untuk perangkat kelas bawah: tanpa backdrop-filter,
-  // partikel ambient lebih sedikit, tanpa streak, satu layer bintang
-  var lite = (navigator.deviceMemory && navigator.deviceMemory <= 4) ||
-    (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
-  if (lite) document.body.classList.add("lite");
-
   /* ---------- Helper ---------- */
 
   function $(id) { return document.getElementById(id); }
@@ -56,7 +50,7 @@
     var ctx = canvas.getContext("2d");
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
     var particles = [];
-    var COUNT = document.body.classList.contains("lite") ? 18 : 34;
+    var COUNT = 34;
     var MAX = 220; // cap total agar aman di HP kelas menengah
     var running = false;
     var started = false;
@@ -158,11 +152,6 @@
         if (p.shape === "heart") { drawHeart(p, a); continue; }
         if (p.shape === "coin") { drawCoin(p, a); continue; }
         if (p.shape === "confetti") { drawConfetti(p, a); continue; }
-        if (p.shape === "streak") {
-          ctx.fillStyle = hexA("#f3e5ab", a * 0.8);
-          ctx.fillRect(p.x - p.r / 2, p.y - p.len / 2, p.r, p.len);
-          continue;
-        }
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
@@ -259,33 +248,9 @@
 
     function boostUp() { boost = 2.4; }
 
-    // Guratan kecepatan: garis emas singkat berlawanan arah scroll (fling)
-    function streak(dir) {
-      if (!started) return;
-      for (var i = 0; i < 8; i++) {
-        if (particles.length >= MAX) break;
-        var p = spawn(true);
-        p.burst = true;
-        p.x = Math.random() * canvas.width;
-        p.y = Math.random() * canvas.height;
-        p.bvx = 0;
-        p.bvy = dir * (Math.random() * 6 + 9) * dpr;
-        p.grav = 0;
-        p.alpha = 0.5;
-        p.life = 0.5;
-        p.decay = 0.05;
-        p.shape = "streak";
-        p.r = (Math.random() * 1.2 + 0.7) * dpr;
-        p.len = (Math.random() * 26 + 18) * dpr;
-        p.rot = 0;
-        p.spin = 0;
-        particles.push(p);
-      }
-    }
-
     function count() { return particles.length; }
 
-    return { start: start, burst: burst, rain: rain, boostUp: boostUp, streak: streak, count: count };
+    return { start: start, burst: burst, rain: rain, boostUp: boostUp, count: count };
   })();
 
   /* ---------- Isi data dari config ---------- */
@@ -318,13 +283,11 @@
     $("bride-photo").src = b.photo;
     setupInstagram("bride-ig", b.instagram);
 
-    // Tanggal hero & finale: "03 . 10 . 2026"
+    // Tanggal hero: "03 . 10 . 2026"
     var d = new Date(CFG.event.mainDateISO);
     if (!isNaN(d)) {
       var pad = function (n) { return String(n).padStart(2, "0"); };
-      var dateLabel = pad(d.getDate()) + " . " + pad(d.getMonth() + 1) + " . " + d.getFullYear();
-      fillText("hero-date", dateLabel);
-      fillText("finale-date", dateLabel);
+      fillText("hero-date", pad(d.getDate()) + " . " + pad(d.getMonth() + 1) + " . " + d.getFullYear());
     }
 
     fillText("quote-text", CFG.quote.text);
@@ -466,8 +429,10 @@
 
     window.WeddingParticles.boostUp();
     if (navigator.vibrate) navigator.vibrate(8);
-    // (Burst scene penutup dihapus — finale "Langit Berbintang" butuh
-    //  masuk dalam kegelapan; perayaannya dipicu wedding:finale)
+    // Burst emas menyambut scene penutup
+    if (i === scenes.length - 1) {
+      window.WeddingParticles.burst(window.innerWidth / 2, window.innerHeight * 0.32);
+    }
     emit("wedding:scene", { index: i, total: scenes.length });
   }
 
@@ -533,28 +498,11 @@
       } else {
         FX.initTilt();
       }
-      try {
-        FX.openCover(unlockScroll);
-      } catch (e) {
-        // Timeline pembuka gagal → jangan pernah biarkan tamu terkunci
-        $("cover").classList.add("open");
-        unlockScroll();
-      }
+      FX.openCover(unlockScroll);
     } else {
       $("cover").classList.add("open");
       unlockScroll();
     }
-
-    // Jaring pengaman: apa pun yang terjadi pada animasi pembuka,
-    // 4 detik setelah klik halaman WAJIB bisa discroll & cover minggir
-    setTimeout(function () {
-      var cover = $("cover");
-      if (document.body.classList.contains("locked")) unlockScroll();
-      if (cover && getComputedStyle(cover).display !== "none") {
-        cover.classList.add("open");
-        cover.style.pointerEvents = "none";
-      }
-    }, 4000);
 
     emit("wedding:opened", {});
   });
@@ -608,15 +556,6 @@
       else el.textContent = val;
     }
 
-    // Angka hari raksasa di latar scene countdown (parallax scrub)
-    var ghost = document.querySelector(".count-ghost");
-    var prevGhost = null;
-    function setGhost(days) {
-      if (!ghost || prevGhost === days) return;
-      prevGhost = days;
-      ghost.textContent = days;
-    }
-
     function tick() {
       var diff = target - Date.now();
       if (diff <= 0) {
@@ -626,7 +565,6 @@
         return;
       }
       var s = Math.floor(diff / 1000);
-      setGhost(Math.floor(s / 86400));
       setDigit("cd-days", Math.floor(s / 86400));
       setDigit("cd-hours", Math.floor((s % 86400) / 3600));
       setDigit("cd-mins", Math.floor((s % 3600) / 60));

@@ -24,88 +24,7 @@
     opened = true;
     helloGuest();
     armIdleFirefly();
-    armScrollSurprises();
   });
-
-  /* ---------- Kejutan mikro di titik scroll tak terduga (sekali saja) ---------- */
-
-  function armScrollSurprises() {
-    if (!hasGsap || !window.ScrollTrigger) return;
-
-    // 1. Tengah scene mempelai: sebutir hati terbang dari pria ke wanita
-    ScrollTrigger.create({
-      trigger: ".scene-couple", start: "30% top", once: true,
-      onEnter: heartFlight,
-    });
-
-    // 2. Scene acara: ikon pin lokasi bergoyang minta diperhatikan
-    ScrollTrigger.create({
-      trigger: ".scene-event", start: "55% center", once: true,
-      onEnter: function () {
-        gsap.fromTo(".pin-icon", { rotation: -14 },
-          { rotation: 0, duration: 1.2, ease: "elastic.out(1, 0.3)", stagger: 0.15, transformOrigin: "50% 100%" });
-      },
-    });
-
-    // 3. Menjelang galeri: bintang jatuh melintas diagonal
-    ScrollTrigger.create({
-      trigger: ".scene-gallery", start: "top 90%", once: true,
-      onEnter: shootingStar,
-    });
-
-    // 4. Daftar ucapan tampil: percikan kecil menyambut doa-doa
-    ScrollTrigger.create({
-      trigger: "#wishes", start: "top 75%", once: true,
-      onEnter: function () {
-        if (!P) return;
-        var el = document.getElementById("wishes");
-        var r = el.getBoundingClientRect();
-        P.burst(r.left + r.width / 2, r.top, 10, { speed: 0.6 });
-      },
-    });
-  }
-
-  function heartFlight() {
-    var g = document.getElementById("groom-photo");
-    var b = document.getElementById("bride-photo");
-    if (!g || !b) return;
-    var r1 = g.getBoundingClientRect(), r2 = b.getBoundingClientRect();
-    var x0 = r1.left + r1.width / 2, y0 = r1.top + r1.height / 2;
-    var x1 = r2.left + r2.width / 2, y1 = r2.top + r2.height / 2;
-    var fly = document.createElement("div");
-    fly.className = "love-drift";
-    fly.textContent = "♥";
-    document.body.appendChild(fly);
-    var st = { p: 0 };
-    gsap.set(fly, { x: x0, y: y0, opacity: 0 });
-    gsap.to(fly, { opacity: 1, duration: 0.35 });
-    gsap.to(st, {
-      p: 1, duration: 2.2, ease: "power1.inOut",
-      onUpdate: function () {
-        gsap.set(fly, {
-          x: x0 + (x1 - x0) * st.p,
-          y: y0 + (y1 - y0) * st.p - Math.sin(st.p * Math.PI) * 60,
-        });
-      },
-      onComplete: function () {
-        if (P) P.burst(x1, y1, 8, { shape: "heart", up: true });
-        fly.remove();
-      },
-    });
-  }
-
-  function shootingStar() {
-    var star = document.createElement("div");
-    star.className = "firefly shooting-star";
-    document.body.appendChild(star);
-    var x0 = -30, y0 = window.innerHeight * 0.12;
-    var x1 = window.innerWidth + 30, y1 = window.innerHeight * 0.34;
-    gsap.set(star, { x: x0, y: y0 });
-    gsap.to(star, {
-      x: x1, y: y1, duration: 1.1, ease: "power1.in",
-      onComplete: function () { star.remove(); },
-    });
-  }
 
   /* ---------- A1. Tap di mana saja = percikan emas ---------- */
 
@@ -212,36 +131,14 @@
     if (navigator.vibrate) navigator.vibrate(10);
   });
 
-  /* ---------- C8. Puncak finale = hujan konfeti besar ----------
-     Menunggu wedding:finale dari timeline "Langit Berbintang" —
-     bukan saat masuk scene, supaya kegelapan pembuka tidak terganggu */
+  /* ---------- C8. Scene penutup pertama kali = konfeti besar ---------- */
 
   var closingCelebrated = false;
-  window.addEventListener("wedding:finale", function () {
-    if (closingCelebrated) return;
+  window.addEventListener("wedding:scene", function (e) {
+    if (closingCelebrated || !e.detail || e.detail.index !== e.detail.total - 1) return;
     closingCelebrated = true;
-    if (P) P.rain(90, "confetti");
+    if (P) P.rain(130, "confetti");
   });
-
-  /* ---------- C8b. Cincin 💍 progress ikut merayakan garis finis ---------- */
-
-  var ringDone = false;
-  window.addEventListener("scroll", function () {
-    if (ringDone || !opened) return;
-    var max = document.documentElement.scrollHeight - window.innerHeight;
-    if (max <= 0 || window.scrollY / max < 0.99) return;
-    ringDone = true;
-    var ring = document.getElementById("progress-ring");
-    if (ring && hasGsap) {
-      // main.js menimpa style.transform tiap frame scroll — pakai properti
-      // rotate/scale terpisah agar salto cincin tak ikut tertimpa
-      var st = { r: 0, s: 1 };
-      gsap.timeline({ onUpdate: function () { ring.style.rotate = st.r + "deg"; ring.style.scale = st.s; } })
-        .to(st, { r: 360, s: 1.7, duration: 0.55, ease: "power2.out" })
-        .to(st, { s: 1, duration: 0.4, ease: "back.out(2)" });
-    }
-    if (P) P.burst(window.innerWidth - 24, 14, 12, { speed: 0.7 });
-  }, { passive: true });
 
   /* ---------- C9. Sapaan personal ---------- */
 
