@@ -56,8 +56,8 @@
     var started = false;
     var boost = 1;
 
-    var CONFETTI_COLORS = ["#d4af37", "#f3e5ab", "#a8842c", "#f7f3e8", "#3f9b6e"];
-    var HEART_COLORS = ["#d4af37", "#f3e5ab", "#e8a1a4"];
+    var CONFETTI_COLORS = ["#e6cd82", "#f6ecc4", "#bfa053", "#f7f3e8", "#9ca57c"];
+    var HEART_COLORS = ["#e6cd82", "#f6ecc4", "#e8a1a4"];
 
     function resize() {
       canvas.width = window.innerWidth * dpr;
@@ -106,10 +106,10 @@
       ctx.scale(squash, 1);
       ctx.beginPath();
       ctx.arc(0, 0, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = hexA("#d4af37", a);
+      ctx.fillStyle = hexA("#e6cd82", a);
       ctx.fill();
       ctx.lineWidth = 1.2 * dpr;
-      ctx.strokeStyle = hexA("#a8842c", a);
+      ctx.strokeStyle = hexA("#bfa053", a);
       ctx.stroke();
       ctx.restore();
     }
@@ -155,7 +155,7 @@
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(212, 175, 55, " + Math.max(0, a).toFixed(3) + ")";
+        ctx.fillStyle = "rgba(230, 205, 130, " + Math.max(0, a).toFixed(3) + ")";
         ctx.shadowColor = "rgba(243, 229, 171, 0.8)";
         ctx.shadowBlur = 6 * dpr;
         ctx.fill();
