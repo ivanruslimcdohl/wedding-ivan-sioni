@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Great+Vibes&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=fresco6" />
+  <link rel="stylesheet" href="css/style.css?v=fresco7" />
 </head>
 <body class="locked">
 
@@ -65,6 +65,16 @@
         <path d="M0 0 Q6 -14 2 -26" fill="none" stroke="#7C9367" stroke-width="1.6" stroke-linecap="round"/>
         <ellipse cx="-3" cy="-9" rx="3.4" ry="7" fill="#8AA271" transform="rotate(-24 -3 -9)"/>
         <ellipse cx="7" cy="-16" rx="3" ry="6.4" fill="#7C9367" transform="rotate(18 7 -16)"/>
+      </g>
+
+      <!-- Monogram IS: "I" serif + "S" kaligrafi menyilang -->
+      <g id="monoIS">
+        <text x="66" y="56" text-anchor="middle" dominant-baseline="central"
+              font-family="Cormorant Garamond, serif" font-weight="600" font-size="94"
+              fill="currentColor">I</text>
+        <text x="55" y="72" text-anchor="middle" dominant-baseline="central"
+              font-family="Great Vibes, cursive" font-size="98"
+              fill="currentColor" opacity=".8" transform="rotate(-8 55 72)">S</text>
       </g>
 
       <!-- Kupu-kupu -->
@@ -165,6 +175,7 @@
     <img id="cover-photo" class="cover-photo" alt="" hidden />
     <div class="cover-veil"></div>
     <div class="cover-inner">
+      <svg class="cover-mono cv" style="--d:.05s" viewBox="0 0 120 120" aria-hidden="true"><use href="#monoIS"/></svg>
       <p class="eyebrow cv" style="--d:.15s">The Wedding Of</p>
       <h1 class="script cover-names cv" style="--d:.35s">Ivan <span class="amp">&amp;</span> Sioni</h1>
       <div class="rule-dot cv" style="--d:.55s"><span></span></div>
@@ -375,7 +386,7 @@
       <p class="eyebrow rv">Tuhan Memberkati</p>
       <p class="closing-sign rv">Kami yang berbahagia,</p>
       <h2 class="script closing-names rv">Ivan <span class="amp">&amp;</span> Sioni</h2>
-      <div class="monogram rv" aria-hidden="true"><span>I</span><i>&amp;</i><span>S</span></div>
+      <svg class="closing-mono rv" viewBox="0 0 120 120" aria-hidden="true"><use href="#monoIS"/></svg>
       <p class="credit rv">Made with love · 2026</p>
     </section>
 
@@ -390,7 +401,7 @@
   <!-- Toast -->
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-  <script src="js/config.js?v=fresco6"></script>
-  <script src="js/main.js?v=fresco6"></script>
+  <script src="js/config.js?v=fresco7"></script>
+  <script src="js/main.js?v=fresco7"></script>
 </body>
 </html>

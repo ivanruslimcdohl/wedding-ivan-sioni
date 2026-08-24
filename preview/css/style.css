@@ -168,6 +168,7 @@ button { font: inherit; cursor: pointer; }
 .cover.has-photo .to-label, .cover.has-photo .guest-name { color: var(--white); }
 
 .cover-inner { position: relative; text-align: center; padding: 0 1.6rem; max-width: 30rem; }
+.cover-mono { width: 5.4rem; height: auto; color: var(--ink); margin-bottom: .2rem; }
 .cover-names { font-size: clamp(3.4rem, 13vw, 4.6rem); line-height: 1.12; margin: .4rem 0 .2rem; }
 .to-label { font-size: .95rem; color: var(--ink-soft); margin-top: 1.1rem; }
 .guest-name {
@@ -407,13 +408,10 @@ button { font: inherit; cursor: pointer; }
 
 .closing-sign { color: var(--ink-soft); margin-top: 1.6rem; }
 .closing-names { font-size: 3rem; line-height: 1.1; margin-top: .2rem; }
-.monogram {
-  display: inline-flex; align-items: center; justify-content: center; gap: .25rem;
-  width: 4.6rem; height: 4.6rem; margin-top: 1.6rem;
-  border: 1px solid var(--gold); border-radius: 50%;
-  font-family: var(--serif); font-size: 1.3rem; letter-spacing: .05em; color: var(--gold);
+.closing-mono {
+  width: 7rem; height: auto; margin-top: 1.4rem;
+  color: var(--ink);
 }
-.monogram i { font-family: var(--script); font-size: 1.1rem; font-style: normal; }
 .credit { margin-top: 1.6rem; font-size: .8rem; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-soft); opacity: .7; }
 
 /* ---------- Musik & toast ---------- */
