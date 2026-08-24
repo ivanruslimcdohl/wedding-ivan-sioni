@@ -1,7 +1,7 @@
 /* ============================================================
-   Undangan Pernikahan — logika utama
-   Animasi scroll-driven (GSAP ScrollTrigger) ada di js/animations.js;
-   file ini memegang data, navigasi section, countdown, musik, RSVP.
+   Undangan "Garden Fresco" — logika utama.
+   Sengaja tanpa GSAP/scroll-scrub: hanya IntersectionObserver
+   + transisi CSS (transform/opacity) yang stabil di iOS.
    ============================================================ */
 
 (function () {
@@ -9,21 +9,6 @@
 
   var CFG = window.WEDDING_CONFIG;
   var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  // Mesin animasi GSAP; null bila CDN gagal / reduced motion → fallback CSS
-  var FX = !reducedMotion && window.WeddingFX ? window.WeddingFX : null;
-  if (FX) {
-    document.body.classList.add("gsap-on");
-    FX.init();
-  }
-
-  // Mode ringan untuk perangkat kelas bawah: tanpa backdrop-filter,
-  // partikel ambient lebih sedikit, tanpa streak, satu layer bintang
-  var lite = (navigator.deviceMemory && navigator.deviceMemory <= 4) ||
-    (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
-  if (lite) document.body.classList.add("lite");
-
-  /* ---------- Helper ---------- */
 
   function $(id) { return document.getElementById(id); }
 
@@ -42,251 +27,14 @@
     toastTimer = setTimeout(function () { el.classList.remove("show"); }, 2600);
   }
 
-  function emit(name, detail) {
-    window.dispatchEvent(new CustomEvent(name, { detail: detail || {} }));
+  /* ---------- Foto opsional: tampilkan bila diisi di config ---------- */
+
+  function setPhoto(imgId, src) {
+    var img = $(imgId);
+    if (!img || !src) return;
+    img.src = src;
+    img.hidden = false;
   }
-
-  // API kecil untuk layer kejutan (js/delight.js)
-  window.WeddingUI = { toast: toast };
-
-  /* ---------- Partikel emas (ambient + burst) ---------- */
-
-  window.WeddingParticles = (function () {
-    var canvas = $("particles");
-    var ctx = canvas.getContext("2d");
-    var dpr = Math.min(window.devicePixelRatio || 1, 2);
-    var particles = [];
-    var COUNT = document.body.classList.contains("lite") ? 18 : 34;
-    var MAX = 220; // cap total agar aman di HP kelas menengah
-    var running = false;
-    var started = false;
-    var boost = 1;
-
-    var CONFETTI_COLORS = ["#d4af37", "#f3e5ab", "#a8842c", "#f7f3e8", "#3f9b6e"];
-    var HEART_COLORS = ["#d4af37", "#f3e5ab", "#e8a1a4"];
-
-    function resize() {
-      canvas.width = window.innerWidth * dpr;
-      canvas.height = window.innerHeight * dpr;
-    }
-
-    function spawn(randomY) {
-      return {
-        x: Math.random() * canvas.width,
-        y: randomY ? Math.random() * canvas.height : canvas.height + 10 * dpr,
-        r: (Math.random() * 1.6 + 0.6) * dpr,
-        vy: (Math.random() * 0.35 + 0.12) * dpr,
-        vx: (Math.random() - 0.5) * 0.15 * dpr,
-        alpha: Math.random() * 0.5 + 0.2,
-        tw: Math.random() * Math.PI * 2,
-        twSpeed: Math.random() * 0.03 + 0.01,
-      };
-    }
-
-    function hexA(hex, a) {
-      var r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
-      return "rgba(" + r + "," + g + "," + b + "," + Math.max(0, a).toFixed(3) + ")";
-    }
-
-    function drawHeart(p, a) {
-      ctx.save();
-      ctx.translate(p.x, p.y);
-      ctx.rotate(p.rot);
-      var s = p.r / 5;
-      ctx.scale(s, s);
-      ctx.beginPath();
-      ctx.moveTo(0, 3.2);
-      ctx.bezierCurveTo(-6, -2.6, -3.2, -7.4, 0, -3.6);
-      ctx.bezierCurveTo(3.2, -7.4, 6, -2.6, 0, 3.2);
-      ctx.closePath();
-      ctx.fillStyle = hexA(p.color, a);
-      ctx.fill();
-      ctx.restore();
-    }
-
-    function drawCoin(p, a) {
-      var squash = Math.max(0.12, Math.abs(Math.cos(p.tw * 3))); // koin berputar
-      ctx.save();
-      ctx.translate(p.x, p.y);
-      ctx.rotate(p.rot * 0.3);
-      ctx.scale(squash, 1);
-      ctx.beginPath();
-      ctx.arc(0, 0, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = hexA("#d4af37", a);
-      ctx.fill();
-      ctx.lineWidth = 1.2 * dpr;
-      ctx.strokeStyle = hexA("#a8842c", a);
-      ctx.stroke();
-      ctx.restore();
-    }
-
-    function drawConfetti(p, a) {
-      ctx.save();
-      ctx.translate(p.x, p.y);
-      ctx.rotate(p.rot);
-      ctx.scale(1, Math.max(0.15, Math.abs(Math.sin(p.tw * 2)))); // kepakan kertas
-      ctx.fillStyle = hexA(p.color, a);
-      ctx.fillRect(-p.r, -p.r * 0.65, p.r * 2, p.r * 1.3);
-      ctx.restore();
-    }
-
-    function frame() {
-      if (!running) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      if (boost > 1) boost = Math.max(1, boost - 0.02);
-
-      for (var i = particles.length - 1; i >= 0; i--) {
-        var p = particles[i];
-
-        if (p.burst) {
-          p.x += p.bvx;
-          p.y += p.bvy;
-          p.bvy += (p.grav != null ? p.grav : 0.045 * dpr);
-          if (p.sway) p.bvx += Math.sin(p.tw * 2) * 0.05 * dpr;
-          p.life -= p.decay;
-          p.rot += p.spin;
-          if (p.life <= 0 || p.y > canvas.height + 24 * dpr) { particles.splice(i, 1); continue; }
-        } else {
-          p.y -= p.vy * boost;
-          p.x += p.vx;
-          if (p.y < -12 * dpr) particles[i] = spawn(false);
-        }
-
-        p.tw += p.twSpeed;
-        var a = (p.burst ? p.alpha * Math.min(1, p.life * 1.6) : p.alpha) * (0.6 + 0.4 * Math.sin(p.tw));
-
-        if (p.shape === "heart") { drawHeart(p, a); continue; }
-        if (p.shape === "coin") { drawCoin(p, a); continue; }
-        if (p.shape === "confetti") { drawConfetti(p, a); continue; }
-        if (p.shape === "streak") {
-          ctx.fillStyle = hexA("#f3e5ab", a * 0.8);
-          ctx.fillRect(p.x - p.r / 2, p.y - p.len / 2, p.r, p.len);
-          continue;
-        }
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(212, 175, 55, " + Math.max(0, a).toFixed(3) + ")";
-        ctx.shadowColor = "rgba(243, 229, 171, 0.8)";
-        ctx.shadowBlur = 6 * dpr;
-        ctx.fill();
-        ctx.shadowBlur = 0;
-      }
-      requestAnimationFrame(frame);
-    }
-
-    function start() {
-      if (started) return;
-      started = true;
-      resize();
-      window.addEventListener("resize", resize);
-      for (var i = 0; i < COUNT; i++) particles.push(spawn(true));
-      running = true;
-      requestAnimationFrame(frame);
-
-      document.addEventListener("visibilitychange", function () {
-        var wasRunning = running;
-        running = !document.hidden;
-        if (running && !wasRunning) requestAnimationFrame(frame);
-      });
-    }
-
-    function decorate(p, shape, i) {
-      p.shape = shape;
-      p.rot = Math.random() * Math.PI * 2;
-      p.spin = (Math.random() - 0.5) * 0.22;
-      p.twSpeed = Math.random() * 0.06 + 0.02;
-      if (shape === "heart") {
-        p.color = HEART_COLORS[i % HEART_COLORS.length];
-        p.r = (Math.random() * 3 + 4) * dpr;
-      } else if (shape === "coin") {
-        p.r = (Math.random() * 2.4 + 3) * dpr;
-      } else if (shape === "confetti") {
-        p.color = CONFETTI_COLORS[i % CONFETTI_COLORS.length];
-        p.r = (Math.random() * 2.6 + 2.4) * dpr;
-        p.sway = true;
-      }
-    }
-
-    // Ledakan partikel dari titik (x, y) layar
-    function burst(x, y, n, opts) {
-      if (!started) return;
-      opts = opts || {};
-      n = n || 26;
-      for (var i = 0; i < n; i++) {
-        if (particles.length >= MAX) break;
-        var ang = opts.up
-          ? -Math.PI / 2 + (Math.random() - 0.5) * 1.3
-          : Math.random() * Math.PI * 2;
-        var speed = (Math.random() * 2.6 + 1.2) * dpr * (opts.speed || 1);
-        var p = spawn(true);
-        p.burst = true;
-        p.x = x * dpr;
-        p.y = y * dpr;
-        p.bvx = Math.cos(ang) * speed;
-        p.bvy = Math.sin(ang) * speed - 1.2 * dpr;
-        p.alpha = 0.95;
-        p.life = 1;
-        p.decay = Math.random() * 0.012 + 0.008;
-        p.grav = 0.045 * dpr;
-        if (opts.shape && opts.shape !== "dot") decorate(p, opts.shape, i);
-        else { p.shape = "dot"; p.r = (Math.random() * 2 + 0.8) * dpr; p.rot = 0; p.spin = 0; }
-        particles.push(p);
-      }
-    }
-
-    // Hujan dari atas layar (konfeti / emas)
-    function rain(n, shape) {
-      if (!started) return;
-      n = n || 100;
-      for (var i = 0; i < n; i++) {
-        if (particles.length >= MAX) break;
-        var p = spawn(true);
-        p.burst = true;
-        p.x = Math.random() * canvas.width;
-        p.y = -Math.random() * 0.7 * canvas.height - 10 * dpr;
-        p.bvx = (Math.random() - 0.5) * 0.9 * dpr;
-        p.bvy = (Math.random() * 1.8 + 1.6) * dpr;
-        p.grav = 0.012 * dpr;
-        p.alpha = 0.95;
-        p.life = 1;
-        p.decay = Math.random() * 0.003 + 0.0035;
-        decorate(p, shape || "confetti", i);
-        if ((shape || "confetti") === "dot") { p.shape = "dot"; p.r = (Math.random() * 2 + 1) * dpr; }
-        particles.push(p);
-      }
-    }
-
-    function boostUp() { boost = 2.4; }
-
-    // Guratan kecepatan: garis emas singkat berlawanan arah scroll (fling)
-    function streak(dir) {
-      if (!started) return;
-      for (var i = 0; i < 8; i++) {
-        if (particles.length >= MAX) break;
-        var p = spawn(true);
-        p.burst = true;
-        p.x = Math.random() * canvas.width;
-        p.y = Math.random() * canvas.height;
-        p.bvx = 0;
-        p.bvy = dir * (Math.random() * 6 + 9) * dpr;
-        p.grav = 0;
-        p.alpha = 0.5;
-        p.life = 0.5;
-        p.decay = 0.05;
-        p.shape = "streak";
-        p.r = (Math.random() * 1.2 + 0.7) * dpr;
-        p.len = (Math.random() * 26 + 18) * dpr;
-        p.rot = 0;
-        p.spin = 0;
-        particles.push(p);
-      }
-    }
-
-    function count() { return particles.length; }
-
-    return { start: start, burst: burst, rain: rain, boostUp: boostUp, streak: streak, count: count };
-  })();
 
   /* ---------- Isi data dari config ---------- */
 
@@ -310,26 +58,39 @@
 
     fillText("groom-full", g.full);
     fillText("groom-parents", g.parents);
-    $("groom-photo").src = g.photo;
+    setPhoto("groom-photo", g.photo);
     setupInstagram("groom-ig", g.instagram);
 
     fillText("bride-full", b.full);
     fillText("bride-parents", b.parents);
-    $("bride-photo").src = b.photo;
+    setPhoto("bride-photo", b.photo);
     setupInstagram("bride-ig", b.instagram);
 
-    // Tanggal hero & finale: "03 . 10 . 2026"
+    setPhoto("cover-photo", CFG.coverPhoto);
+    setPhoto("closing-photo", CFG.coverPhoto);
+    if (CFG.coverPhoto) $("cover").classList.add("has-photo");
+
+    // Tanggal: "03 . 10 . 2026"
     var d = new Date(CFG.event.mainDateISO);
     if (!isNaN(d)) {
       var pad = function (n) { return String(n).padStart(2, "0"); };
-      var dateLabel = pad(d.getDate()) + " . " + pad(d.getMonth() + 1) + " . " + d.getFullYear();
-      fillText("hero-date", dateLabel);
-      fillText("finale-date", dateLabel);
+      fillText("hero-date", pad(d.getDate()) + " . " + pad(d.getMonth() + 1) + " . " + d.getFullYear());
     }
 
     fillText("quote-text", CFG.quote.text);
     fillText("quote-source", CFG.quote.source);
     fillText("closing-text", CFG.closing.text);
+
+    // Kisah cinta
+    var storyBox = $("story-list");
+    (CFG.loveStory || []).forEach(function (item) {
+      var div = document.createElement("div");
+      div.className = "story-item rv";
+      div.innerHTML =
+        "<h3>" + escapeHtml(item.title) + "</h3>" +
+        "<p>" + escapeHtml(item.text) + "</p>";
+      storyBox.appendChild(div);
+    });
 
     // Acara
     ["akad", "resepsi"].forEach(function (key) {
@@ -342,21 +103,31 @@
       $(key + "-maps").href = ev.mapsUrl;
     });
 
-    // Galeri (filmstrip horizontal)
-    var strip = $("gallery-strip");
+    // Galeri: item pertama & terakhir tampil lebar penuh
+    var grid = $("gallery-grid");
+    var murals = [
+      "40 60 400 300", "20 260 220 300", "240 240 220 300",
+      "80 340 240 320", "160 100 240 320", "40 380 400 300",
+    ];
     CFG.gallery.forEach(function (src, i) {
       var frame = document.createElement("figure");
-      frame.className = "gframe";
-      var img = document.createElement("img");
-      img.src = src;
-      img.alt = "Galeri foto " + (i + 1);
-      img.loading = "lazy";
-      frame.appendChild(img);
-      strip.appendChild(frame);
+      frame.className = "gframe rv" + (i === 0 || i === CFG.gallery.length - 1 ? " wide" : "");
+      if (src) {
+        var img = document.createElement("img");
+        img.src = src;
+        img.alt = "Galeri foto " + (i + 1);
+        img.loading = "lazy";
+        frame.appendChild(img);
+      } else {
+        frame.innerHTML =
+          '<svg viewBox="' + murals[i % murals.length] + '" preserveAspectRatio="xMidYMid slice">' +
+          '<use href="#muralArt"/></svg>' +
+          '<span class="g-hint">Foto ' + (i + 1) + "</span>";
+      }
+      grid.appendChild(frame);
     });
-    $("gallery-counter").textContent = "1 / " + CFG.gallery.length;
 
-    // Amplop digital
+    // Amplop digital (muncul setelah tombol ditekan)
     var giftList = $("gift-list");
     CFG.gifts.forEach(function (gift) {
       var card = document.createElement("div");
@@ -365,12 +136,16 @@
         '<span class="gift-bank">' + escapeHtml(gift.bank) + "</span>" +
         '<span class="gift-number">' + escapeHtml(gift.number) + "</span>" +
         '<span class="gift-holder">a.n. ' + escapeHtml(gift.holder) + "</span>" +
-        '<button type="button" class="btn-outline btn-copy">Salin Nomor</button>';
-      card.querySelector(".btn-copy").addEventListener("click", function (ev) {
-        var r = ev.currentTarget.getBoundingClientRect();
-        copyText(gift.number, { x: r.left + r.width / 2, y: r.top + r.height / 2 });
+        '<button type="button" class="btn small ghost btn-copy">Salin Nomor</button>';
+      card.querySelector(".btn-copy").addEventListener("click", function () {
+        copyText(gift.number);
       });
       giftList.appendChild(card);
+    });
+
+    $("gift-toggle").addEventListener("click", function () {
+      var list = $("gift-list");
+      list.hidden = !list.hidden;
     });
 
     // Save the Date (Google Calendar)
@@ -380,23 +155,19 @@
     $("bg-music").src = CFG.musicSrc;
   }
 
-  function copiedFx(pos) {
-    toast("Tersalin! Tuhan memberkati kemurahan hatimu 🤍");
-    if (pos) emit("wedding:copy", pos);
-  }
+  /* ---------- Salin nomor rekening ---------- */
 
-  function copyText(text, pos) {
+  function copiedFx() { toast("Tersalin! Tuhan memberkati kemurahan hatimu"); }
+
+  function copyText(text) {
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(
-        function () { copiedFx(pos); },
-        function () { fallbackCopy(text, pos); }
-      );
+      navigator.clipboard.writeText(text).then(copiedFx, function () { fallbackCopy(text); });
     } else {
-      fallbackCopy(text, pos);
+      fallbackCopy(text);
     }
   }
 
-  function fallbackCopy(text, pos) {
+  function fallbackCopy(text) {
     var ta = document.createElement("textarea");
     ta.value = text;
     ta.style.position = "fixed";
@@ -405,7 +176,7 @@
     ta.select();
     try {
       document.execCommand("copy");
-      copiedFx(pos);
+      copiedFx();
     } catch (e) {
       toast("Gagal menyalin, salin manual ya");
     }
@@ -434,129 +205,38 @@
   function setGuestName() {
     var params = new URLSearchParams(location.search);
     var name = (params.get("to") || "").trim();
-    if (name) {
-      $("guest-name").textContent = name.slice(0, 60);
-    }
+    if (name) $("guest-name").textContent = name.slice(0, 60);
   }
 
-  /* ---------- Navigasi scene: dots + scene aktif ---------- */
+  /* ---------- Reveal saat elemen masuk layar ---------- */
 
-  var scenes = Array.prototype.slice.call(document.querySelectorAll(".story .scene"));
-  var dotsNav = $("dots");
-  var dotBtns = [];
-  var activeIdx = -1;
+  function initReveals() {
+    var els = document.querySelectorAll(".rv");
+    if (reducedMotion || !("IntersectionObserver" in window)) {
+      els.forEach(function (el) { el.classList.add("on"); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) {
+          en.target.classList.add("on");
+          io.unobserve(en.target);
+        }
+      });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
+    els.forEach(function (el) { io.observe(el); });
+  }
+
+  /* ---------- Sampul ---------- */
+
   var opened = false;
-
-  scenes.forEach(function (scene, i) {
-    var b = document.createElement("button");
-    b.type = "button";
-    b.setAttribute("aria-label", "Ke bagian " + (i + 1));
-    b.addEventListener("click", function () {
-      scene.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
-    });
-    dotsNav.appendChild(b);
-    dotBtns.push(b);
-  });
-
-  function setActive(i) {
-    if (i === activeIdx) return;
-    activeIdx = i;
-    dotBtns.forEach(function (b, j) { b.classList.toggle("active", j === i); });
-    if (!opened) return;
-
-    window.WeddingParticles.boostUp();
-    if (navigator.vibrate) navigator.vibrate(8);
-    // (Burst scene penutup dihapus — finale "Langit Berbintang" butuh
-    //  masuk dalam kegelapan; perayaannya dipicu wedding:finale)
-    emit("wedding:scene", { index: i, total: scenes.length });
-  }
-
-  /* Scene aktif = scene teratas yang panelnya sedang tampil.
-     Karena scene saling tumpang-tindih (margin negatif), IO band tengah
-     bisa memuat >1 scene — pilih yang indeksnya TERBESAR yang intersect. */
-  var visible = [];
-  var io = new IntersectionObserver(function (entries) {
-    entries.forEach(function (en) {
-      var i = scenes.indexOf(en.target);
-      en.target.classList.toggle("in-view", en.isIntersecting);
-      visible[i] = en.isIntersecting;
-    });
-    for (var i = scenes.length - 1; i >= 0; i--) {
-      if (visible[i]) { setActive(i); break; }
-    }
-  }, { rootMargin: "-45% 0px -45% 0px", threshold: 0 });
-  scenes.forEach(function (s) { io.observe(s); });
-
-  /* ---------- Progress bar scroll ---------- */
-
-  var progressEl = $("scroll-progress");
-  var ringEl = $("progress-ring");
-  var ticking = false;
-  window.addEventListener("scroll", function () {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(function () {
-      ticking = false;
-      var max = document.documentElement.scrollHeight - window.innerHeight;
-      var p = max > 0 ? window.scrollY / max : 0;
-      progressEl.style.transform = "scaleX(" + p + ")";
-      // Cincin 💍 meluncur di ujung garis progress
-      if (ringEl) ringEl.style.transform = "translateX(" + (p * (window.innerWidth - 20)).toFixed(1) + "px)";
-    });
-  }, { passive: true });
-
-  /* ---------- Cover gate ---------- */
-
-  function unlockScroll() {
-    document.body.classList.remove("locked");
-    window.scrollTo(0, 0);
-  }
-
   $("open-btn").addEventListener("click", function () {
     if (opened) return;
     opened = true;
-
-    // Mulai musik (dari gesture klik, jadi lolos kebijakan autoplay)
     startMusic();
-
-    if (!reducedMotion) window.WeddingParticles.start();
-
-    // iOS butuh izin gyro & motion dari gesture user; Android langsung jalan
-    if (window.DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
-      DeviceMotionEvent.requestPermission().catch(function () {});
-    }
-    if (FX) {
-      if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
-        DeviceOrientationEvent.requestPermission()
-          .then(function () { FX.initTilt(); })
-          .catch(function () { FX.initTilt(); }); // fallback pointer tetap aktif
-      } else {
-        FX.initTilt();
-      }
-      try {
-        FX.openCover(unlockScroll);
-      } catch (e) {
-        // Timeline pembuka gagal → jangan pernah biarkan tamu terkunci
-        $("cover").classList.add("open");
-        unlockScroll();
-      }
-    } else {
-      $("cover").classList.add("open");
-      unlockScroll();
-    }
-
-    // Jaring pengaman: apa pun yang terjadi pada animasi pembuka,
-    // 4 detik setelah klik halaman WAJIB bisa discroll & cover minggir
-    setTimeout(function () {
-      var cover = $("cover");
-      if (document.body.classList.contains("locked")) unlockScroll();
-      if (cover && getComputedStyle(cover).display !== "none") {
-        cover.classList.add("open");
-        cover.style.pointerEvents = "none";
-      }
-    }, 4000);
-
-    emit("wedding:opened", {});
+    $("cover").classList.add("open");
+    document.body.classList.remove("locked");
+    window.scrollTo(0, 0);
   });
 
   /* ---------- Musik ---------- */
@@ -572,10 +252,7 @@
         musicBtn.hidden = false;
         musicBtn.classList.add("playing");
       },
-      function () {
-        // File belum ada / gagal load — sembunyikan tombol saja
-        musicBtn.hidden = true;
-      }
+      function () { musicBtn.hidden = true; }
     );
   }
 
@@ -599,24 +276,6 @@
     var target = new Date(CFG.event.mainDateISO).getTime();
     if (isNaN(target)) return;
 
-    var prev = {};
-    function setDigit(id, val) {
-      if (prev[id] === val) return;
-      prev[id] = val;
-      var el = $(id);
-      if (FX && opened) FX.flipDigit(el, val);
-      else el.textContent = val;
-    }
-
-    // Angka hari raksasa di latar scene countdown (parallax scrub)
-    var ghost = document.querySelector(".count-ghost");
-    var prevGhost = null;
-    function setGhost(days) {
-      if (!ghost || prevGhost === days) return;
-      prevGhost = days;
-      ghost.textContent = days;
-    }
-
     function tick() {
       var diff = target - Date.now();
       if (diff <= 0) {
@@ -626,11 +285,10 @@
         return;
       }
       var s = Math.floor(diff / 1000);
-      setGhost(Math.floor(s / 86400));
-      setDigit("cd-days", Math.floor(s / 86400));
-      setDigit("cd-hours", Math.floor((s % 86400) / 3600));
-      setDigit("cd-mins", Math.floor((s % 3600) / 60));
-      setDigit("cd-secs", s % 60);
+      fillText("cd-days", String(Math.floor(s / 86400)));
+      fillText("cd-hours", String(Math.floor((s % 86400) / 3600)));
+      fillText("cd-mins", String(Math.floor((s % 3600) / 60)));
+      fillText("cd-secs", String(s % 60));
     }
     tick();
     var timer = setInterval(tick, 1000);
@@ -641,7 +299,7 @@
   function renderWishes(wishes) {
     var box = $("wishes");
     if (!wishes || !wishes.length) {
-      box.innerHTML = '<p class="wishes-empty">Belum ada ucapan. Jadilah yang pertama! ✨</p>';
+      box.innerHTML = '<p class="wishes-empty">Belum ada ucapan. Jadilah yang pertama!</p>';
       return;
     }
     box.innerHTML = wishes
@@ -699,12 +357,9 @@
       body: data.toString(),
     })
       .then(function () {
-        var att = data.get("attendance");
-        toast(att === "Hadir"
-          ? "Yeay! Sampai jumpa di sana 🎉"
-          : "Terima kasih, doamu sangat berarti 🤍");
-        emit("wedding:rsvp", { attendance: att });
-        // Tampilkan langsung tanpa menunggu reload dari server
+        toast(data.get("attendance") === "Hadir"
+          ? "Yeay! Sampai jumpa di sana"
+          : "Terima kasih, doamu sangat berarti");
         var box = $("wishes");
         var empty = box.querySelector(".wishes-empty");
         if (empty) empty.remove();
@@ -730,6 +385,7 @@
 
   setGuestName();
   populate();
+  initReveals();
   startCountdown();
   loadWishes();
 })();
