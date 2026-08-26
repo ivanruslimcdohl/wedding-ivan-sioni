@@ -590,6 +590,8 @@ body:not(.locked) .drift-bf { opacity: .85; }
   animation: heroDove 13s ease-in-out infinite 3s;
   pointer-events: none;
 }
+/* pasangannya terbang menyusul sedikit di belakang */
+.hero-dove2 { width: 34px; animation-delay: 3.9s; margin-top: 4%; }
 @keyframes heroDove {
   0%   { left: -14%; top: 42%; transform: rotate(6deg); opacity: 0; }
   6%   { opacity: .95; }
