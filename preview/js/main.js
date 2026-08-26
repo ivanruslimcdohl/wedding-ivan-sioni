@@ -67,7 +67,7 @@
     setupInstagram("bride-ig", b.instagram);
 
     setPhoto("cover-photo", CFG.coverPhoto);
-    setPhoto("closing-photo", CFG.coverPhoto);
+    setPhoto("closing-photo", CFG.closingPhoto || CFG.coverPhoto);
     if (CFG.coverPhoto) $("cover").classList.add("has-photo");
 
     // Tanggal: "03 . 10 . 2026"

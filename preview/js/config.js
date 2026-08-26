@@ -12,19 +12,22 @@ window.WEDDING_CONFIG = {
       full: "Ivan Rusli",
       parents: "Putra dari Bapak Lie Sje Foek & Ibu Irene Khoe",
       instagram: "", // contoh: "ivanrusli" (tanpa @)
-      photo: "", // foto potret ("" = ilustrasi bawaan)
+      photo: "../assets/img/groom.jpg", // foto potret ("" = ilustrasi bawaan)
     },
     bride: {
       nick: "Sioni",
       full: "Sara Sioni Santoso",
       parents: "Putri dari Bapak Sie Djing San & Ibu Njoo Eng Lian",
       instagram: "",
-      photo: "",
+      photo: "../assets/img/bride.jpg",
     },
   },
 
-  // Foto sampul (layar pembuka & panel kiri desktop). "" = mural ilustrasi.
-  coverPhoto: "",
+  // Foto sampul (layar pembuka). "" = mural ilustrasi.
+  coverPhoto: "../assets/img/cover.jpg",
+
+  // Foto bingkai lengkung di bagian penutup. "" = ikut coverPhoto/mural.
+  closingPhoto: "../assets/img/closing.jpg",
 
   // Kisah cinta — sunting bebas; hapus item jika tidak ingin ditampilkan.
   loveStory: [
@@ -81,7 +84,14 @@ window.WEDDING_CONFIG = {
 
   // Galeri — isi path foto; "" akan memakai ilustrasi bawaan.
   // Baris pertama & terakhir tampil lebar penuh, sisanya dua kolom.
-  gallery: ["", "", "", "", "", ""],
+  gallery: [
+    "../assets/img/gallery-1.jpg",
+    "../assets/img/gallery-2.jpg",
+    "../assets/img/gallery-3.jpg",
+    "../assets/img/gallery-4.jpg",
+    "../assets/img/gallery-5.jpg",
+    "../assets/img/gallery-6.jpg",
+  ],
 
   musicSrc: "../assets/audio/music.mp3",
 

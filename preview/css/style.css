@@ -161,7 +161,16 @@ button { font: inherit; cursor: pointer; }
     radial-gradient(110% 80% at 50% 30%, rgba(246, 241, 227, .55), rgba(246, 241, 227, .2) 60%, rgba(63, 78, 61, .16));
 }
 .cover.has-photo .cover-veil {
-  background: linear-gradient(rgba(30, 39, 29, .45), rgba(30, 39, 29, .55));
+  background: linear-gradient(rgba(30, 39, 29, .42) 55%, rgba(30, 39, 29, .2));
+}
+/* Saat sampul berfoto: teks ditambatkan ke atas agar wajah tidak tertutup */
+.cover.has-photo { place-items: start center; }
+.cover.has-photo .cover-inner { margin-top: 6vh; }
+.cover.has-photo .cover-mono {
+  /* Di atas foto gelap: huruf dibalik jadi putih, latar jadi hitam,
+     lalu screen meleburkan hitamnya. */
+  filter: brightness(1.12) contrast(1.15) invert(1);
+  mix-blend-mode: screen;
 }
 .cover.has-photo .cover-inner { color: var(--white); }
 .cover.has-photo .eyebrow, .cover.has-photo .script,
@@ -289,7 +298,12 @@ button { font: inherit; cursor: pointer; }
   background: var(--cream-deep);
 }
 .arch-photo .ph-art { position: absolute; inset: 0; width: 100%; height: 100%; }
-.arch-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.arch-photo img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: 50% 28%;
+}
+/* Bila foto asli terpasang, sembunyikan inisial placeholder */
+.arch-photo img:not([hidden]) + .ph-initial { display: none; }
 .ph-initial {
   position: absolute; inset: 0; display: grid; place-items: center;
   font-size: 4.4rem; color: rgba(63, 78, 61, .8);
