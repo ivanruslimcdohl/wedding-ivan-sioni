@@ -354,10 +354,10 @@ button { font: inherit; cursor: pointer; }
   margin-top: 1.8rem;
   box-shadow: 0 16px 34px -24px rgba(63, 78, 61, .5), inset 0 0 0 1px rgba(169, 143, 85, .35);
 }
-.ev-art { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .5; object-fit: cover; }
+.ev-art { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .38; object-fit: cover; }
 .event-card::before {
   content: ""; position: absolute; inset: 0;
-  background: linear-gradient(rgba(251, 248, 240, .82), rgba(251, 248, 240, .58));
+  background: linear-gradient(rgba(251, 248, 240, .92), rgba(251, 248, 240, .74));
 }
 .ev-inner { position: relative; padding: 2.2rem 1.4rem 2rem; }
 .ev-name { font-size: 2.4rem; line-height: 1; color: var(--ink); }
