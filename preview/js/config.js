@@ -98,7 +98,7 @@ window.WEDDING_CONFIG = {
 
   musicSrc: "../assets/audio/music.mp3",
   // Mulai musik dari detik ke-berapa (loop juga kembali ke titik ini)
-  musicStartAt: 41,
+  musicStartAt: 30,
 
   appsScriptUrl:
     "https://script.google.com/macros/s/AKfycbzkQVshxLqWLdxb7A_Nu7HPDt4DAW0htnmfuKA1okQ6bwrxcOleXI5oxUmTgcKwylD3/exec",
