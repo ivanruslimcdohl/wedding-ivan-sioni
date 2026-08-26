@@ -1,7 +1,7 @@
 // ============================================================
 //  KONFIGURASI UNDANGAN — versi "Garden Fresco" (preview)
 //  Semua data & foto diatur dari file ini.
-//  Foto: isi path-nya (contoh "../assets/img/prewed-1.jpg"),
+//  Foto: isi path-nya (contoh "../assets/img/prewed-1.jpg?v=2"),
 //  atau biarkan "" untuk memakai ilustrasi bawaan.
 // ============================================================
 
@@ -12,22 +12,25 @@ window.WEDDING_CONFIG = {
       full: "Ivan Rusli",
       parents: "Putra dari Bapak Lie Sje Foek & Ibu Irene Khoe",
       instagram: "", // contoh: "ivanrusli" (tanpa @)
-      photo: "../assets/img/groom.jpg", // foto potret ("" = ilustrasi bawaan)
+      photo: "../assets/img/groom.jpg?v=2", // foto potret ("" = ilustrasi bawaan)
     },
     bride: {
       nick: "Sioni",
       full: "Sara Sioni Santoso",
       parents: "Putri dari Bapak Sie Djing San & Ibu Njoo Eng Lian",
       instagram: "",
-      photo: "../assets/img/bride.jpg",
+      photo: "../assets/img/bride.jpg?v=2",
     },
   },
 
   // Foto sampul (layar pembuka). "" = mural ilustrasi.
-  coverPhoto: "../assets/img/cover.jpg",
+  coverPhoto: "../assets/img/cover.jpg?v=2",
+  // "light" = foto sampul terang (teks jadi hijau tinta),
+  // "dark" = foto gelap (teks putih + veil gelap).
+  coverPhotoTone: "light",
 
   // Foto bingkai lengkung di bagian penutup. "" = ikut coverPhoto/mural.
-  closingPhoto: "../assets/img/closing.jpg",
+  closingPhoto: "../assets/img/closing.jpg?v=2",
 
   // Kisah cinta — sunting bebas; hapus item jika tidak ingin ditampilkan.
   loveStory: [
@@ -85,15 +88,17 @@ window.WEDDING_CONFIG = {
   // Galeri — isi path foto; "" akan memakai ilustrasi bawaan.
   // Baris pertama & terakhir tampil lebar penuh, sisanya dua kolom.
   gallery: [
-    "../assets/img/gallery-1.jpg",
-    "../assets/img/gallery-2.jpg",
-    "../assets/img/gallery-3.jpg",
-    "../assets/img/gallery-4.jpg",
-    "../assets/img/gallery-5.jpg",
-    "../assets/img/gallery-6.jpg",
+    "../assets/img/gallery-1.jpg?v=2",
+    "../assets/img/gallery-2.jpg?v=2",
+    "../assets/img/gallery-3.jpg?v=2",
+    "../assets/img/gallery-4.jpg?v=2",
+    "../assets/img/gallery-5.jpg?v=2",
+    "../assets/img/gallery-6.jpg?v=2",
   ],
 
   musicSrc: "../assets/audio/music.mp3",
+  // Mulai musik dari detik ke-berapa (loop juga kembali ke titik ini)
+  musicStartAt: 41,
 
   appsScriptUrl:
     "https://script.google.com/macros/s/AKfycbzkQVshxLqWLdxb7A_Nu7HPDt4DAW0htnmfuKA1okQ6bwrxcOleXI5oxUmTgcKwylD3/exec",

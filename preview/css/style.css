@@ -166,6 +166,21 @@ button { font: inherit; cursor: pointer; }
 /* Saat sampul berfoto: teks ditambatkan ke atas agar wajah tidak tertutup */
 .cover.has-photo { place-items: start center; }
 .cover.has-photo .cover-inner { margin-top: 6vh; }
+
+/* Mode foto terang (mis. kapel putih): teks kembali hijau tinta,
+   veil berubah jadi kabut cream lembut di area teks */
+.cover.has-photo.photo-light .cover-veil {
+  background: linear-gradient(rgba(246, 241, 227, .68) 26%, rgba(246, 241, 227, .28) 52%, transparent 72%);
+}
+.cover.has-photo.photo-light .cover-inner,
+.cover.has-photo.photo-light .script,
+.cover.has-photo.photo-light .guest-name { color: var(--ink); }
+.cover.has-photo.photo-light .eyebrow,
+.cover.has-photo.photo-light .to-label { color: var(--ink-soft); }
+.cover.has-photo.photo-light .cover-mono {
+  filter: brightness(1.12) contrast(1.15);
+  mix-blend-mode: multiply;
+}
 .cover.has-photo .cover-mono {
   /* Di atas foto gelap: huruf dibalik jadi putih, latar jadi hitam,
      lalu screen meleburkan hitamnya. */

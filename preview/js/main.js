@@ -68,7 +68,10 @@
 
     setPhoto("cover-photo", CFG.coverPhoto);
     setPhoto("closing-photo", CFG.closingPhoto || CFG.coverPhoto);
-    if (CFG.coverPhoto) $("cover").classList.add("has-photo");
+    if (CFG.coverPhoto) {
+      $("cover").classList.add("has-photo");
+      if (CFG.coverPhotoTone === "light") $("cover").classList.add("photo-light");
+    }
 
     // Tanggal: "03 . 10 . 2026"
     var d = new Date(CFG.event.mainDateISO);
@@ -250,10 +253,28 @@
   var music = $("bg-music");
   var musicBtn = $("music-btn");
   var musicOn = false;
+  var musicStartAt = CFG.musicStartAt || 0;
+
+  function seekToStart() {
+    if (musicStartAt > 0) {
+      try { music.currentTime = musicStartAt; } catch (e) {}
+    }
+  }
+
+  // currentTime baru bisa diset setelah metadata termuat (penting di iOS)
+  music.addEventListener("loadedmetadata", seekToStart);
+
+  // Tanpa atribut loop: saat lagu habis, ulang dari titik mulai (bukan intro)
+  music.addEventListener("ended", function () {
+    seekToStart();
+    music.play();
+  });
 
   function startMusic() {
+    if (music.readyState >= 1) seekToStart();
     music.play().then(
       function () {
+        if (musicStartAt > 0 && music.currentTime < musicStartAt) seekToStart();
         musicOn = true;
         musicBtn.hidden = false;
         musicBtn.classList.add("playing");
