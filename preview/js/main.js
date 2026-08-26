@@ -237,6 +237,10 @@
     $("cover").classList.add("open");
     document.body.classList.remove("locked");
     window.scrollTo(0, 0);
+    // Putar ulang rakitan "paper craft" mural untuk panel hero
+    document.body.classList.remove("assemble");
+    void document.body.offsetWidth;
+    document.body.classList.add("assemble");
   });
 
   /* ---------- Musik ---------- */

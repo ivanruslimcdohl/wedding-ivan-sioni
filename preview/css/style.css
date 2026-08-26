@@ -481,6 +481,39 @@ body:not(.locked) .drift-bf { opacity: .85; }
 @keyframes flap  { from { transform: scaleX(1); } to { transform: scaleX(.45); } }
 @keyframes flapR { from { transform: scaleX(1); } to { transform: scaleX(.45); } }
 
+/* ---------- Rakitan "paper craft" mural ----------
+   Lapisan pemandangan masuk satu per satu: bukit naik dari bawah,
+   pohon meluncur dari kiri/kanan, bunga muncul, rusa & kupu-kupu
+   menyusul. Diputar saat halaman dimuat dan diulang saat undangan
+   dibuka (kelas .assemble di <body> dilepas-pasang). */
+
+.assemble .m-hill1  { animation: mRise    .9s cubic-bezier(.25,.9,.3,1)  both .1s; }
+.assemble .m-hill2  { animation: mRise    .9s cubic-bezier(.25,.9,.3,1)  both .22s; }
+.assemble .m-hill3  { animation: mRiseBig 1s  cubic-bezier(.25,.9,.3,1)  both .34s; }
+.assemble .m-tree-l {
+  animation: mFromLeft 1.1s cubic-bezier(.3,1.3,.45,1) both .55s;
+  transform-box: fill-box; transform-origin: 50% 100%;
+}
+.assemble .m-tree-r {
+  animation: mFromRight 1.1s cubic-bezier(.3,1.3,.45,1) both .72s;
+  transform-box: fill-box; transform-origin: 50% 100%;
+}
+.assemble .m-flora {
+  animation: mPop 1s cubic-bezier(.3,1.35,.45,1) both .95s;
+  transform-box: fill-box; transform-origin: 50% 100%;
+}
+.assemble .m-deer  { animation: mSettle 1s   ease-out both 1.25s; }
+.assemble .m-cloud { animation: mDrift  1.6s ease-out both .15s; }
+.assemble .m-bf    { animation: mSettle 1.2s ease-out both 1.5s; }
+
+@keyframes mRise      { from { transform: translateY(70px);  opacity: 0; } }
+@keyframes mRiseBig   { from { transform: translateY(110px); opacity: 0; } }
+@keyframes mFromLeft  { from { transform: translateX(-170px) rotate(-6deg); opacity: 0; } }
+@keyframes mFromRight { from { transform: translateX(170px)  rotate(6deg);  opacity: 0; } }
+@keyframes mPop       { from { transform: translateY(90px) scale(.85); opacity: 0; } }
+@keyframes mSettle    { from { transform: translateY(16px); opacity: 0; } }
+@keyframes mDrift     { from { transform: translateY(-26px); opacity: 0; } }
+
 /* ---------- Reveal saat scroll ---------- */
 
 .rv { opacity: 0; transform: translateY(26px); transition: opacity .9s ease, transform .9s ease; }
@@ -493,4 +526,7 @@ body:not(.locked) .drift-bf { opacity: .85; }
   .cv, .rv { opacity: 1 !important; transform: none !important; animation: none !important; transition: none !important; }
   .drift { display: none; }
   .music-btn.playing svg { animation: none; }
+  .assemble .m-hill1, .assemble .m-hill2, .assemble .m-hill3,
+  .assemble .m-tree-l, .assemble .m-tree-r, .assemble .m-flora,
+  .assemble .m-deer, .assemble .m-cloud, .assemble .m-bf { animation: none !important; }
 }

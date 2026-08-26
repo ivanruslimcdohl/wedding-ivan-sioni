@@ -12,9 +12,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Great+Vibes&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=fresco8" />
+  <link rel="stylesheet" href="css/style.css?v=fresco9" />
 </head>
-<body class="locked">
+<body class="locked assemble">
 
   <!-- ============ KOLEKSI GAMBAR (dipakai ulang via <use>) ============ -->
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -97,18 +97,18 @@
 
       <!-- MURAL: lembah, pepohonan, rusa, bunga -->
       <g id="muralArt">
-        <rect width="480" height="680" fill="url(#gSky)"/>
-        <g filter="url(#soft)" opacity=".7">
+        <rect id="mSky" width="480" height="680" fill="url(#gSky)"/>
+        <g id="mClouds" filter="url(#soft)" opacity=".7">
           <ellipse cx="150" cy="96" rx="90" ry="22" fill="#FBF7EA"/>
           <ellipse cx="340" cy="150" rx="110" ry="24" fill="#FAF6E8"/>
           <ellipse cx="90" cy="210" rx="70" ry="16" fill="#FBF7EA"/>
           <ellipse cx="400" cy="60" rx="70" ry="16" fill="#FCF8EC"/>
         </g>
-        <path d="M0 330 Q90 260 190 316 Q290 372 480 300 L480 680 L0 680 Z" fill="url(#gHillFar)"/>
-        <path d="M0 400 Q140 330 260 386 Q380 440 480 384 L480 680 L0 680 Z" fill="url(#gHillNear)"/>
-        <path d="M0 470 Q160 420 300 462 Q400 490 480 468 L480 680 L0 680 Z" fill="url(#gMeadow)"/>
+        <path id="mHill1" d="M0 330 Q90 260 190 316 Q290 372 480 300 L480 680 L0 680 Z" fill="url(#gHillFar)"/>
+        <path id="mHill2" d="M0 400 Q140 330 260 386 Q380 440 480 384 L480 680 L0 680 Z" fill="url(#gHillNear)"/>
+        <path id="mHill3" d="M0 470 Q160 420 300 462 Q400 490 480 468 L480 680 L0 680 Z" fill="url(#gMeadow)"/>
         <!-- pohon kiri -->
-        <g>
+        <g id="mTreeL">
           <path d="M78 505 C74 430 70 380 76 320" stroke="#8A6F52" stroke-width="10" fill="none" stroke-linecap="round"/>
           <path d="M76 400 Q52 380 44 352 M77 360 Q100 342 108 318" stroke="#8A6F52" stroke-width="5" fill="none" stroke-linecap="round"/>
           <g>
@@ -119,7 +119,7 @@
           </g>
         </g>
         <!-- pohon kanan -->
-        <g>
+        <g id="mTreeR">
           <path d="M404 512 C410 436 412 392 406 336" stroke="#8A6F52" stroke-width="9" fill="none" stroke-linecap="round"/>
           <path d="M407 420 Q432 400 440 372" stroke="#8A6F52" stroke-width="5" fill="none" stroke-linecap="round"/>
           <g>
@@ -129,7 +129,7 @@
           </g>
         </g>
         <!-- rusa kecil di kejauhan -->
-        <g transform="translate(64 176) scale(.45)" opacity=".85">
+        <g id="mDeer"><g transform="translate(64 176) scale(.45)" opacity=".85">
           <g stroke="#84603F" stroke-width="3.6" stroke-linecap="round">
             <path d="M310 500 l-2 26 M322 502 l0 26 M344 500 l3 25 M354 496 l6 24" fill="none"/>
           </g>
@@ -137,8 +137,9 @@
           <path fill="#8A6444" d="M354 478 q-1 -14 6 -24 q3 -5 8 -3 l7 3 q8 0 10 6 l2 5 q1 3 -2 4 l-7 1 q-2 9 -11 11 Z"/>
           <ellipse cx="371" cy="452" rx="2.6" ry="5" fill="#8A6444" transform="rotate(-30 371 452)"/>
           <path d="M361 452 q-4 -12 1 -22 M362 441 q-6 -2 -9 -8 M362 434 q5 -6 11 -7 M356 448 q-7 -1 -11 -6" fill="none" stroke="#6E4E33" stroke-width="2.4" stroke-linecap="round"/>
-        </g>
+        </g></g>
         <!-- semak bunga bawah -->
+        <g id="mFlora">
         <g opacity=".95">
           <ellipse cx="60" cy="560" rx="90" ry="40" fill="#87A06B"/>
           <ellipse cx="420" cy="572" rx="100" ry="44" fill="#7E965F"/>
@@ -153,15 +154,29 @@
         <use href="#peony" transform="translate(210 636) scale(.9)"/>
         <use href="#rosette" transform="translate(258 648)"/>
         <use href="#lilac" transform="translate(172 652)"/>
+        </g>
+        <g id="mBf">
         <use href="#butterfly" transform="translate(196 420) scale(.55)"/>
         <use href="#butterfly" transform="translate(150 470) scale(.4) rotate(-14)"/>
+        </g>
       </g>
     </defs>
   </svg>
 
   <!-- ============ SAMPUL / GERBANG ============ -->
   <div id="cover" class="cover">
-    <svg class="cover-art" viewBox="0 0 480 680" preserveAspectRatio="xMidYMid slice"><use href="#muralArt"/></svg>
+    <svg class="cover-art" viewBox="0 0 480 680" preserveAspectRatio="xMidYMid slice">
+      <use href="#mSky"/>
+      <use class="m-cloud" href="#mClouds"/>
+      <use class="m-hill1" href="#mHill1"/>
+      <use class="m-hill2" href="#mHill2"/>
+      <use class="m-hill3" href="#mHill3"/>
+      <use class="m-tree-l" href="#mTreeL"/>
+      <use class="m-tree-r" href="#mTreeR"/>
+      <use class="m-deer" href="#mDeer"/>
+      <use class="m-flora" href="#mFlora"/>
+      <use class="m-bf" href="#mBf"/>
+    </svg>
     <img id="cover-photo" class="cover-photo" alt="" hidden />
     <div class="cover-veil"></div>
     <div class="cover-inner">
@@ -189,7 +204,18 @@
 
     <!-- 1. PEMBUKA: mural + nama -->
     <section class="panel panel-hero">
-      <svg class="hero-art" viewBox="0 0 480 680" preserveAspectRatio="xMidYMid slice"><use href="#muralArt"/></svg>
+      <svg class="hero-art" viewBox="0 0 480 680" preserveAspectRatio="xMidYMid slice">
+        <use href="#mSky"/>
+        <use class="m-cloud" href="#mClouds"/>
+        <use class="m-hill1" href="#mHill1"/>
+        <use class="m-hill2" href="#mHill2"/>
+        <use class="m-hill3" href="#mHill3"/>
+        <use class="m-tree-l" href="#mTreeL"/>
+        <use class="m-tree-r" href="#mTreeR"/>
+        <use class="m-deer" href="#mDeer"/>
+        <use class="m-flora" href="#mFlora"/>
+        <use class="m-bf" href="#mBf"/>
+      </svg>
       <div class="hero-grad"></div>
       <div class="hero-text">
         <p class="eyebrow rv">The Wedding Of</p>
@@ -391,7 +417,7 @@
   <!-- Toast -->
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-  <script src="js/config.js?v=fresco8"></script>
-  <script src="js/main.js?v=fresco8"></script>
+  <script src="js/config.js?v=fresco9"></script>
+  <script src="js/main.js?v=fresco9"></script>
 </body>
 </html>
