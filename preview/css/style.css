@@ -579,15 +579,33 @@ body:not(.locked) .drift-bf { opacity: .85; }
 .event-card.on .m-bf    { animation: mSettle .9s ease-out both 1.05s; }
 
 /* Gerak ambient tanpa henti (transform ringan, aman iOS) */
-@keyframes idleSway  { from { transform: rotate(-1.1deg); } to { transform: rotate(1.1deg); } }
-@keyframes idleSwayR { from { transform: rotate(1.1deg); }  to { transform: rotate(-1.1deg); } }
-@keyframes idleSwayS { from { transform: rotate(-1.6deg); } to { transform: rotate(1.6deg); } }
+@keyframes idleSway  { from { transform: rotate(-2.2deg); } to { transform: rotate(2.2deg); } }
+@keyframes idleSwayR { from { transform: rotate(2.2deg); }  to { transform: rotate(-2.2deg); } }
+@keyframes idleSwayS { from { transform: rotate(-2.6deg); } to { transform: rotate(2.6deg); } }
 @keyframes idleBob {
-  from { transform: translateY(0); }
-  to   { transform: translateY(4px); }
+  from { transform: translateY(0) rotate(0); }
+  to   { transform: translateY(6px) rotate(.6deg); }
 }
-@keyframes idleDrift { from { transform: translateX(-12px); } to { transform: translateX(12px); } }
-@keyframes idleFlut  { from { transform: translateY(-7px) rotate(-2deg); } to { transform: translateY(7px) rotate(2deg); } }
+@keyframes idleDrift { from { transform: translateX(-24px); } to { transform: translateX(24px); } }
+@keyframes idleFlut  { from { transform: translateY(-12px) rotate(-4deg); } to { transform: translateY(12px) rotate(4deg); } }
+
+/* Merpati meluncur melintasi langit hero */
+.hero-dove {
+  position: absolute; width: 42px; height: auto;
+  left: -14%; top: 40%;
+  opacity: 0;
+  animation: heroDove 13s ease-in-out infinite 3s;
+  pointer-events: none;
+}
+@keyframes heroDove {
+  0%   { left: -14%; top: 42%; transform: rotate(6deg); opacity: 0; }
+  6%   { opacity: .95; }
+  30%  { top: 30%; transform: rotate(-4deg); }
+  55%  { top: 36%; transform: rotate(3deg); }
+  72%  { opacity: .95; }
+  80%  { left: 108%; top: 28%; transform: rotate(-2deg); opacity: 0; }
+  100% { left: 108%; top: 28%; opacity: 0; }
+}
 
 /* Buket mahkota "mekar" saat kartu lengkung terlihat */
 .arch-card.on .crown {
@@ -680,5 +698,5 @@ body:not(.locked) .drift-bf { opacity: .85; }
   .m-flora, .m-deer, .m-cloud, .m-bf,
   .arch-card.on .crown, .doves .dove, .doves.on .dv-wing,
   .burst-bf { animation: none !important; }
-  .doves, .bf-burst { display: none; }
+  .doves, .bf-burst, .hero-dove { display: none; }
 }
