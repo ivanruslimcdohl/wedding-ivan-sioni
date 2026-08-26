@@ -187,6 +187,8 @@ button { font: inherit; cursor: pointer; }
   filter: brightness(1.12) contrast(1.15) invert(1);
   mix-blend-mode: screen;
 }
+/* Mural sampul tak terlihat di balik foto — matikan agar hemat */
+.cover.has-photo .cover-art { display: none; }
 .cover.has-photo .cover-inner { color: var(--white); }
 .cover.has-photo .eyebrow, .cover.has-photo .script,
 .cover.has-photo .to-label, .cover.has-photo .guest-name { color: var(--white); }
@@ -524,40 +526,68 @@ body:not(.locked) .drift-bf { opacity: .85; }
 .assemble .art-main .m-hill2  { animation: mRise    .9s cubic-bezier(.25,.9,.3,1)  both .22s; }
 .assemble .art-main .m-hill3  { animation: mRiseBig 1s  cubic-bezier(.25,.9,.3,1)  both .34s; }
 .assemble .art-main .m-tree-l {
-  animation: mFromLeft 1.1s cubic-bezier(.3,1.3,.45,1) both .55s;
-  transform-box: fill-box; transform-origin: 50% 100%;
+  animation: mFromLeft 1.1s cubic-bezier(.3,1.3,.45,1) both .55s,
+             idleSway 6.5s ease-in-out 2s infinite alternate;
+  transform-box: fill-box; transform-origin: 12% 4%;
 }
 .assemble .art-main .m-tree-r {
-  animation: mFromRight 1.1s cubic-bezier(.3,1.3,.45,1) both .72s;
-  transform-box: fill-box; transform-origin: 50% 100%;
+  animation: mFromRight 1.1s cubic-bezier(.3,1.3,.45,1) both .72s,
+             idleSwayR 7.5s ease-in-out 2.4s infinite alternate;
+  transform-box: fill-box; transform-origin: 88% 4%;
 }
 .assemble .art-main .m-flora {
-  animation: mPop 1s cubic-bezier(.3,1.35,.45,1) both .95s;
+  animation: mPop 1s cubic-bezier(.3,1.35,.45,1) both .95s,
+             idleSwayS 5.5s ease-in-out 2.2s infinite alternate;
   transform-box: fill-box; transform-origin: 50% 100%;
 }
-.assemble .art-main .m-deer  { animation: mSettle 1s   ease-out both 1.25s; }
-.assemble .art-main .m-cloud { animation: mDrift  1.6s ease-out both .15s; }
-.assemble .art-main .m-bf    { animation: mSettle 1.2s ease-out both 1.5s; }
+.assemble .art-main .m-deer  {
+  animation: mSettle 1s ease-out both 1.25s,
+             idleBob 3.8s ease-in-out 2.4s infinite alternate;
+}
+.assemble .art-main .m-cloud {
+  animation: mDrift 1.6s ease-out both .15s,
+             idleDrift 18s ease-in-out 2s infinite alternate;
+}
+.assemble .art-main .m-bf {
+  animation: mSettle 1.2s ease-out both 1.5s,
+             idleFlut 4.5s ease-in-out 2.8s infinite alternate;
+}
 
 /* Kartu acara ikut "terakit" saat masuk layar (dipicu kelas .on) */
 .event-card.on .m-hill1  { animation: mRise    .7s cubic-bezier(.25,.9,.3,1)  both .05s; }
 .event-card.on .m-hill2  { animation: mRise    .7s cubic-bezier(.25,.9,.3,1)  both .15s; }
 .event-card.on .m-hill3  { animation: mRiseBig .8s cubic-bezier(.25,.9,.3,1)  both .25s; }
 .event-card.on .m-tree-l {
-  animation: mFromLeft .9s cubic-bezier(.3,1.3,.45,1) both .4s;
-  transform-box: fill-box; transform-origin: 50% 100%;
+  animation: mFromLeft .9s cubic-bezier(.3,1.3,.45,1) both .4s,
+             idleSway 6.5s ease-in-out 1.6s infinite alternate;
+  transform-box: fill-box; transform-origin: 12% 4%;
 }
 .event-card.on .m-tree-r {
-  animation: mFromRight .9s cubic-bezier(.3,1.3,.45,1) both .52s;
-  transform-box: fill-box; transform-origin: 50% 100%;
+  animation: mFromRight .9s cubic-bezier(.3,1.3,.45,1) both .52s,
+             idleSwayR 7.5s ease-in-out 2s infinite alternate;
+  transform-box: fill-box; transform-origin: 88% 4%;
 }
 .event-card.on .m-flora {
   animation: mPop .8s cubic-bezier(.3,1.35,.45,1) both .7s;
   transform-box: fill-box; transform-origin: 50% 100%;
 }
 .event-card.on .m-deer  { animation: mSettle .8s ease-out both .9s; }
-.event-card.on .m-cloud { animation: mDrift 1.2s ease-out both .1s; }
+.event-card.on .m-cloud {
+  animation: mDrift 1.2s ease-out both .1s,
+             idleDrift 18s ease-in-out 1.6s infinite alternate;
+}
 .event-card.on .m-bf    { animation: mSettle .9s ease-out both 1.05s; }
+
+/* Gerak ambient tanpa henti (transform ringan, aman iOS) */
+@keyframes idleSway  { from { transform: rotate(-1.1deg); } to { transform: rotate(1.1deg); } }
+@keyframes idleSwayR { from { transform: rotate(1.1deg); }  to { transform: rotate(-1.1deg); } }
+@keyframes idleSwayS { from { transform: rotate(-1.6deg); } to { transform: rotate(1.6deg); } }
+@keyframes idleBob {
+  from { transform: translateY(0); }
+  to   { transform: translateY(4px); }
+}
+@keyframes idleDrift { from { transform: translateX(-12px); } to { transform: translateX(12px); } }
+@keyframes idleFlut  { from { transform: translateY(-7px) rotate(-2deg); } to { transform: translateY(7px) rotate(2deg); } }
 
 /* Buket mahkota "mekar" saat kartu lengkung terlihat */
 .arch-card.on .crown {
