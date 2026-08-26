@@ -238,7 +238,11 @@ button { font: inherit; cursor: pointer; }
 /* ---------- 1. Pembuka ---------- */
 
 .panel-hero { padding: 0; height: min(92dvh, 780px); display: grid; align-items: start; }
-.hero-art { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hero-art { position: absolute; inset: 0; width: 100%; height: 100%; overflow: hidden; }
+.hero-art .mm {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: center;
+}
 .hero-grad {
   position: absolute; inset: 0;
   background: linear-gradient(
@@ -350,7 +354,7 @@ button { font: inherit; cursor: pointer; }
   margin-top: 1.8rem;
   box-shadow: 0 16px 34px -24px rgba(63, 78, 61, .5), inset 0 0 0 1px rgba(169, 143, 85, .35);
 }
-.ev-art { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .5; }
+.ev-art { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .5; object-fit: cover; }
 .event-card::before {
   content: ""; position: absolute; inset: 0;
   background: linear-gradient(rgba(251, 248, 240, .82), rgba(251, 248, 240, .58));
