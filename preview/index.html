@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Great+Vibes&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=fresco11" />
+  <link rel="stylesheet" href="css/style.css?v=fresco12" />
 </head>
 <body class="locked assemble">
 
@@ -65,6 +65,13 @@
         <path d="M0 0 Q6 -14 2 -26" fill="none" stroke="#7C9367" stroke-width="1.6" stroke-linecap="round"/>
         <ellipse cx="-3" cy="-9" rx="3.4" ry="7" fill="#8AA271" transform="rotate(-24 -3 -9)"/>
         <ellipse cx="7" cy="-16" rx="3" ry="6.4" fill="#7C9367" transform="rotate(18 7 -16)"/>
+      </g>
+
+      <!-- Merpati kertas -->
+      <g id="dove">
+        <path d="M-14 8 Q-4 2 2 2 Q14 0 24 -6 Q16 4 6 7 Q-2 10 -14 8 Z" fill="#FBF8F0" stroke="#C9C2AE" stroke-width=".8"/>
+        <path class="dv-wing" d="M4 2 Q0 -10 10 -20 Q13 -8 9 0 Z" fill="#EFE8D4" stroke="#C9C2AE" stroke-width=".8"/>
+        <circle cx="20" cy="-4" r=".9" fill="#6E7D6A"/>
       </g>
 
       <!-- Kupu-kupu -->
@@ -165,7 +172,7 @@
 
   <!-- ============ SAMPUL / GERBANG ============ -->
   <div id="cover" class="cover">
-    <svg class="cover-art" viewBox="0 0 480 680" preserveAspectRatio="xMidYMid slice">
+    <svg class="cover-art art-main" viewBox="0 0 480 680" preserveAspectRatio="xMidYMid slice">
       <use href="#mSky"/>
       <use class="m-cloud" href="#mClouds"/>
       <use class="m-hill1" href="#mHill1"/>
@@ -204,7 +211,7 @@
 
     <!-- 1. PEMBUKA: mural + nama -->
     <section class="panel panel-hero">
-      <svg class="hero-art" viewBox="0 0 480 680" preserveAspectRatio="xMidYMid slice">
+      <svg class="hero-art art-main" viewBox="0 0 480 680" preserveAspectRatio="xMidYMid slice">
         <use href="#mSky"/>
         <use class="m-cloud" href="#mClouds"/>
         <use class="m-hill1" href="#mHill1"/>
@@ -301,7 +308,12 @@
         <p class="section-intro">Dengan berkat Tuhan, kami dengan sukacita mengundang Anda untuk berbagi kebahagiaan pada hari pernikahan kami</p>
 
         <div class="event-card rv">
-          <svg class="ev-art" viewBox="20 30 440 520" preserveAspectRatio="xMidYMid slice"><use href="#muralArt"/></svg>
+          <svg class="ev-art" viewBox="20 30 440 520" preserveAspectRatio="xMidYMid slice">
+            <use href="#mSky"/><use class="m-cloud" href="#mClouds"/>
+            <use class="m-hill1" href="#mHill1"/><use class="m-hill2" href="#mHill2"/><use class="m-hill3" href="#mHill3"/>
+            <use class="m-tree-l" href="#mTreeL"/><use class="m-tree-r" href="#mTreeR"/>
+            <use class="m-deer" href="#mDeer"/><use class="m-flora" href="#mFlora"/><use class="m-bf" href="#mBf"/>
+          </svg>
           <div class="ev-inner">
             <h3 id="akad-title" class="script ev-name"></h3>
             <div class="rule-dot"><span></span></div>
@@ -318,7 +330,12 @@
         </div>
 
         <div class="event-card rv">
-          <svg class="ev-art" viewBox="20 30 440 520" preserveAspectRatio="xMidYMid slice"><use href="#muralArt"/></svg>
+          <svg class="ev-art" viewBox="20 30 440 520" preserveAspectRatio="xMidYMid slice">
+            <use href="#mSky"/><use class="m-cloud" href="#mClouds"/>
+            <use class="m-hill1" href="#mHill1"/><use class="m-hill2" href="#mHill2"/><use class="m-hill3" href="#mHill3"/>
+            <use class="m-tree-l" href="#mTreeL"/><use class="m-tree-r" href="#mTreeR"/>
+            <use class="m-deer" href="#mDeer"/><use class="m-flora" href="#mFlora"/><use class="m-bf" href="#mBf"/>
+          </svg>
           <div class="ev-inner">
             <h3 id="resepsi-title" class="script ev-name"></h3>
             <div class="rule-dot"><span></span></div>
@@ -353,6 +370,12 @@
     <section class="panel panel-cream texture">
       <h2 class="script section-script rv">Our Gallery</h2>
       <div id="gallery-grid" class="gallery-grid"></div>
+      <!-- Merpati kertas melintas saat galeri terlihat -->
+      <div class="doves rv" aria-hidden="true">
+        <svg class="dove dv1" viewBox="-20 -26 50 42"><use href="#dove"/></svg>
+        <svg class="dove dv2" viewBox="-20 -26 50 42"><use href="#dove"/></svg>
+        <svg class="dove dv3" viewBox="-20 -26 50 42"><use href="#dove"/></svg>
+      </div>
     </section>
 
     <!-- 8. UCAPAN & DOA -->
@@ -408,6 +431,15 @@
 
   </main>
 
+  <!-- Kupu-kupu berhamburan saat undangan dibuka -->
+  <div class="bf-burst" aria-hidden="true">
+    <svg class="burst-bf bb1" viewBox="-24 -16 48 40"><use href="#butterfly"/></svg>
+    <svg class="burst-bf bb2" viewBox="-24 -16 48 40"><use href="#butterfly"/></svg>
+    <svg class="burst-bf bb3" viewBox="-24 -16 48 40"><use href="#butterfly"/></svg>
+    <svg class="burst-bf bb4" viewBox="-24 -16 48 40"><use href="#butterfly"/></svg>
+    <svg class="burst-bf bb5" viewBox="-24 -16 48 40"><use href="#butterfly"/></svg>
+  </div>
+
   <!-- Kupu-kupu melayang -->
   <div class="drift" aria-hidden="true">
     <svg class="drift-bf drift-bf-1" viewBox="-24 -16 48 40"><use href="#butterfly"/></svg>
@@ -417,7 +449,7 @@
   <!-- Toast -->
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-  <script src="js/config.js?v=fresco11"></script>
-  <script src="js/main.js?v=fresco11"></script>
+  <script src="js/config.js?v=fresco12"></script>
+  <script src="js/main.js?v=fresco12"></script>
 </body>
 </html>
