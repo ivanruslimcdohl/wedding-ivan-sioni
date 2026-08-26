@@ -177,15 +177,9 @@ button { font: inherit; cursor: pointer; }
 .cover.has-photo.photo-light .guest-name { color: var(--ink); }
 .cover.has-photo.photo-light .eyebrow,
 .cover.has-photo.photo-light .to-label { color: var(--ink-soft); }
-.cover.has-photo.photo-light .cover-mono {
-  filter: brightness(1.12) contrast(1.15);
-  mix-blend-mode: multiply;
-}
-.cover.has-photo .cover-mono {
-  /* Di atas foto gelap: huruf dibalik jadi putih, latar jadi hitam,
-     lalu screen meleburkan hitamnya. */
-  filter: brightness(1.12) contrast(1.15) invert(1);
-  mix-blend-mode: screen;
+.cover.has-photo:not(.photo-light) .cover-mono {
+  /* Di atas foto gelap: huruf dibalik jadi terang */
+  filter: invert(1) brightness(1.4);
 }
 /* Mural sampul tak terlihat di balik foto — matikan agar hemat */
 .cover.has-photo .cover-art { display: none; }
@@ -194,12 +188,7 @@ button { font: inherit; cursor: pointer; }
 .cover.has-photo .to-label, .cover.has-photo .guest-name { color: var(--white); }
 
 .cover-inner { position: relative; text-align: center; padding: 0 1.6rem; max-width: 30rem; }
-.cover-mono, .closing-mono {
-  /* Latar cream foto didorong jadi putih murni, lalu multiply
-     meleburkannya ke latar undangan — tinggal goresan hurufnya. */
-  filter: brightness(1.12) contrast(1.15);
-  mix-blend-mode: multiply;
-}
+/* Monogram: PNG transparan asli — tanpa trik blend, tanpa flicker */
 .cover-mono {
   width: 6.2rem; height: auto;
   margin: 0 auto .2rem;
