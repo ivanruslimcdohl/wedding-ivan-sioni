@@ -89,7 +89,7 @@ window.WEDDING_CONFIG = {
   // Baris pertama & terakhir tampil lebar penuh, sisanya dua kolom.
   gallery: [
     "../assets/img/gallery-1.jpg?v=2",
-    "../assets/img/gallery-2.jpg?v=2",
+    "../assets/img/gallery-2.jpg?v=3",
     "../assets/img/gallery-3.jpg?v=2",
     "../assets/img/gallery-4.jpg?v=2",
     "../assets/img/gallery-5.jpg?v=2",
