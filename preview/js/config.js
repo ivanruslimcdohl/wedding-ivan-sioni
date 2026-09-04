@@ -19,7 +19,7 @@ window.WEDDING_CONFIG = {
       full: "Sara Sioni Santoso",
       parents: "Putri dari Bapak Sie Djing San & Ibu Njoo Eng Lian",
       instagram: "",
-      photo: "../assets/img/bride.jpg?v=9",
+      photo: "../assets/img/bride.jpg?v=10",
     },
   },
 
