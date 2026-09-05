@@ -224,6 +224,8 @@ button { font: inherit; cursor: pointer; }
 .panel-cream { background: var(--cream); }
 .panel-sage { background: var(--sage); }
 .panel-closing { background: var(--cream); padding-bottom: 3rem; }
+/* Foto jeda full-width (edge-to-edge kolom) */
+.photo-band { width: 100%; height: auto; display: block; }
 
 /* tekstur damask samar */
 .texture::before {
