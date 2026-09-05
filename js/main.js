@@ -209,7 +209,13 @@
   function setGuestName() {
     var params = new URLSearchParams(location.search);
     var name = (params.get("to") || "").trim();
-    if (name) $("guest-name").textContent = name.slice(0, 60);
+    if (name) {
+      name = name.slice(0, 60);
+      $("guest-name").textContent = name;
+      // Soft default: isi otomatis nama di form RSVP (tetap bisa diubah tamu)
+      var rsvpName = $("rsvp-name");
+      if (rsvpName && !rsvpName.value) rsvpName.value = name;
+    }
   }
 
   /* ---------- Reveal saat elemen masuk layar ---------- */
