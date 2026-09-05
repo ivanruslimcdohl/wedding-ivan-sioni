@@ -17,7 +17,7 @@ window.WEDDING_CONFIG = {
     bride: {
       nick: "Sioni",
       full: "Sara Sioni Santoso",
-      parents: "Putri Pertama dari\nTn. Sie Djing San (Paulus Santo Santoso)\n& Ny. Njoo Eng Lian (Ester Sri Lestari)",
+      parents: "Putri Pertama dari\nTn. Sie Djing San (Santo Santoso)\n& Ny. Njoo Eng Lian (Sri Lestari)",
       instagram: "",
       photo: "assets/img/bride.jpg?v=16",
     },
