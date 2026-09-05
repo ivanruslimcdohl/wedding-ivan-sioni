@@ -335,6 +335,7 @@ button { font: inherit; cursor: pointer; }
   margin-bottom: 1.8rem;
 }
 .arch-photo.big .ph-art { border-radius: inherit; }
+.arch-photo.big img { object-position: 50% 50%; }
 
 .person-nick { font-size: 2.5rem; color: var(--ink-soft); line-height: 1; }
 .person-name { font-family: var(--serif); font-weight: 500; font-size: 1.5rem; letter-spacing: .06em; margin-top: .4rem; }
