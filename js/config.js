@@ -30,7 +30,7 @@ window.WEDDING_CONFIG = {
   coverPhotoTone: "light",
 
   // Foto bingkai lengkung di bagian penutup. "" = ikut coverPhoto/mural.
-  closingPhoto: "assets/img/closing.jpg?v=7",
+  closingPhoto: "assets/img/gallery-5.jpg?v=2",
 
   // Kisah cinta — sunting bebas; hapus item jika tidak ingin ditampilkan.
   loveStory: [

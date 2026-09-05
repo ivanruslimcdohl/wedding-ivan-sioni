@@ -332,7 +332,7 @@ button { font: inherit; cursor: pointer; }
   margin-bottom: 1.8rem;
   border: 5px solid var(--ink);
   border-radius: var(--arch-r) var(--arch-r) 18px 18px;
-  aspect-ratio: 3 / 4.2;
+  aspect-ratio: 2 / 3;
 }
 .arch-photo.big .ph-art { border-radius: inherit; }
 .arch-photo.big img { object-position: 50% 50%; }
