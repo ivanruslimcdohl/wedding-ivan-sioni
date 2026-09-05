@@ -84,13 +84,15 @@ window.WEDDING_CONFIG = {
     { bank: "BCA", number: "0810889161", holder: "Sara Sioni Santoso" },
   ],
 
-  // Galeri — isi path foto; "" akan memakai ilustrasi bawaan.
-  // Baris pertama & terakhir tampil lebar penuh, sisanya dua kolom.
+  // Galeri — tiap item { src, wide }. wide:true = lebar penuh (cocok foto lanskap);
+  // tanpa wide = tampil 2 kolom (cocok foto potret). (String polos juga masih didukung.)
   gallery: [
-    "assets/img/gallery-1.jpg?v=2",
-    "assets/img/gallery-2.jpg?v=3",
-    "assets/img/gallery-3.jpg?v=2",
-    "assets/img/gallery-6.jpg?v=2",
+    { src: "assets/img/gallery-1.jpg?v=2", wide: true },
+    { src: "assets/img/gallery-2.jpg?v=3" },
+    { src: "assets/img/gallery-3.jpg?v=2" },
+    { src: "assets/img/gallery-7.jpg?v=1", wide: true },
+    { src: "assets/img/gallery-8.jpg?v=1", wide: true },
+    { src: "assets/img/gallery-6.jpg?v=2", wide: true },
   ],
 
   musicSrc: "assets/audio/music.mp3",

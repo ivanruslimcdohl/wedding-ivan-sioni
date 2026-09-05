@@ -106,15 +106,20 @@
       $(key + "-maps").href = ev.mapsUrl;
     });
 
-    // Galeri: item pertama & terakhir lebar penuh; item tengah yg tersisa ganjil juga lebar penuh (hindari celah)
+    // Galeri: item bisa string ATAU { src, wide }. wide:true = lebar penuh.
+    // (String polos: item pertama & terakhir otomatis lebar penuh.)
     var grid = $("gallery-grid");
     var murals = [
       "40 60 400 300", "20 260 220 300", "240 240 220 300",
       "80 340 240 320", "160 100 240 320", "40 380 400 300",
     ];
-    CFG.gallery.forEach(function (src, i) {
+    CFG.gallery.forEach(function (item, i) {
+      var src = (item && typeof item === "object") ? item.src : item;
+      var wide = (item && typeof item === "object")
+        ? !!item.wide
+        : (i === 0 || i === CFG.gallery.length - 1);
       var frame = document.createElement("figure");
-      frame.className = "gframe rv" + (i === 0 || i === CFG.gallery.length - 1 || (i === CFG.gallery.length - 2 && CFG.gallery.length % 2 === 1) ? " wide" : "");
+      frame.className = "gframe rv" + (wide ? " wide" : "");
       if (src) {
         var img = document.createElement("img");
         img.src = src;
