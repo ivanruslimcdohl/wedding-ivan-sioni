@@ -30,7 +30,7 @@ window.WEDDING_CONFIG = {
   coverPhotoTone: "light",
 
   // Foto bingkai lengkung di bagian penutup. "" = ikut coverPhoto/mural.
-  closingPhoto: "assets/img/gallery-5.jpg?v=2",
+  closingPhoto: "assets/img/gallery-6.jpg?v=2",
 
   // Kisah cinta — sunting bebas; hapus item jika tidak ingin ditampilkan.
   loveStory: [
@@ -92,7 +92,7 @@ window.WEDDING_CONFIG = {
     { src: "assets/img/gallery-3.jpg?v=2" },
     { src: "assets/img/gallery-7.jpg?v=1", wide: true },
     { src: "assets/img/gallery-8.jpg?v=1", wide: true },
-    { src: "assets/img/gallery-6.jpg?v=2", wide: true },
+    { src: "assets/img/gallery-5.jpg?v=2", wide: true, pos: "50% 100%" },
   ],
 
   musicSrc: "assets/audio/music.mp3",

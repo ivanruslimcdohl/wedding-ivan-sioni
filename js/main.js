@@ -125,6 +125,7 @@
         img.src = src;
         img.alt = "Galeri foto " + (i + 1);
         img.loading = "lazy";
+        if (item && typeof item === "object" && item.pos) img.style.objectPosition = item.pos;
         frame.appendChild(img);
       } else {
         frame.innerHTML =
@@ -331,12 +332,9 @@
     }
     box.innerHTML = wishes
       .map(function (w) {
-        var badge = w.attendance
-          ? '<span class="wish-badge">' + escapeHtml(w.attendance) + "</span>"
-          : "";
         return (
           '<div class="wish">' +
-          '<div class="wish-head"><span class="wish-name">' + escapeHtml(w.name || "Anonim") + "</span>" + badge + "</div>" +
+          '<div class="wish-head"><span class="wish-name">' + escapeHtml(w.name || "Anonim") + "</span></div>" +
           '<p class="wish-text">' + escapeHtml(w.message || "") + "</p>" +
           "</div>"
         );
@@ -393,8 +391,7 @@
         var div = document.createElement("div");
         div.className = "wish";
         div.innerHTML =
-          '<div class="wish-head"><span class="wish-name">' + escapeHtml(data.get("name")) + "</span>" +
-          '<span class="wish-badge">' + escapeHtml(data.get("attendance")) + "</span></div>" +
+          '<div class="wish-head"><span class="wish-name">' + escapeHtml(data.get("name")) + "</span></div>" +
           '<p class="wish-text">' + escapeHtml(data.get("message")) + "</p>";
         box.prepend(div);
         $("rsvp-form").reset();
