@@ -56,7 +56,7 @@ window.WEDDING_CONFIG = {
       title: "Holy Matrimony",
       dateLabel: "Sabtu, 3 Oktober 2026",
       timeLabel: "09.00 – 11.00 WIB",
-      venue: "Wahid Prime Hotel — Ballroom B",
+      venue: "Wahid Prime Hotel — Ballroom B",
       address:
         "Jl. Jend. Sudirman No.95, Kutowinangun Kidul, Kec. Tingkir, Kota Salatiga, Jawa Tengah 50742",
       mapsUrl: "https://maps.app.goo.gl/NZdKFmt1VzuZAKi99",
@@ -65,7 +65,7 @@ window.WEDDING_CONFIG = {
       title: "Reception",
       dateLabel: "Sabtu, 3 Oktober 2026",
       timeLabel: "13.00 WIB – selesai",
-      venue: "Wahid Prime Hotel — Ballroom B",
+      venue: "Wahid Prime Hotel — Ballroom B",
       address:
         "Jl. Jend. Sudirman No.95, Kutowinangun Kidul, Kec. Tingkir, Kota Salatiga, Jawa Tengah 50742",
       mapsUrl: "https://maps.app.goo.gl/NZdKFmt1VzuZAKi99",
