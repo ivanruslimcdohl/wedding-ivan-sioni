@@ -62,7 +62,7 @@ window.WEDDING_CONFIG = {
       mapsUrl: "https://maps.app.goo.gl/NZdKFmt1VzuZAKi99",
     },
     resepsi: {
-      title: "Resepsi",
+      title: "Reception",
       dateLabel: "Sabtu, 3 Oktober 2026",
       timeLabel: "13.00 WIB – selesai",
       venue: "Wahid Prime Hotel — Ballroom B",

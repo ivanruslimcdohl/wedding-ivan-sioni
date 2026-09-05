@@ -130,7 +130,7 @@
       grid.appendChild(frame);
     });
 
-    // Amplop digital (muncul setelah tombol ditekan)
+    // Amplop digital (langsung tampil)
     var giftList = $("gift-list");
     CFG.gifts.forEach(function (gift) {
       var card = document.createElement("div");
@@ -144,11 +144,6 @@
         copyText(gift.number);
       });
       giftList.appendChild(card);
-    });
-
-    $("gift-toggle").addEventListener("click", function () {
-      var list = $("gift-list");
-      list.hidden = !list.hidden;
     });
 
     // Save the Date (Google Calendar)
