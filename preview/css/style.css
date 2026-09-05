@@ -306,7 +306,7 @@ button { font: inherit; cursor: pointer; }
   width: min(15.5rem, 72vw);
   aspect-ratio: 3 / 4.1;
   margin: 0 auto 1.3rem;
-  border-radius: var(--arch-r) var(--arch-r) 14px 14px;
+  border-radius: 999px;
   overflow: hidden;
   box-shadow: 0 20px 40px -26px rgba(63, 78, 61, .55), inset 0 0 0 1px rgba(169, 143, 85, .3);
   background: var(--cream-deep);
