@@ -337,7 +337,7 @@ button { font: inherit; cursor: pointer; }
 
 .person-nick { font-size: 2.5rem; color: var(--ink-soft); line-height: 1; }
 .person-name { font-family: var(--serif); font-weight: 500; font-size: 1.5rem; letter-spacing: .06em; margin-top: .4rem; }
-.person-parents { color: var(--ink-soft); font-size: .98rem; line-height: 1.6; max-width: 30ch; margin: 0 auto; }
+.person-parents { color: var(--ink-soft); font-size: .98rem; line-height: 1.6; max-width: 30ch; margin: 0 auto; white-space: pre-line; }
 .big-amp { font-size: 3.2rem; margin-top: 2.2rem; color: var(--gold); }
 
 .ig-link {
