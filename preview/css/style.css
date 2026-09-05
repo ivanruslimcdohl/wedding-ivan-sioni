@@ -304,7 +304,7 @@ button { font: inherit; cursor: pointer; }
 .arch-photo {
   position: relative;
   width: min(15.5rem, 72vw);
-  aspect-ratio: 3 / 4.1;
+  aspect-ratio: 760 / 1142;
   margin: 0 auto 1.3rem;
   border-radius: 999px;
   overflow: hidden;
