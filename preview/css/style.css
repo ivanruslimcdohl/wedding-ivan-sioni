@@ -303,8 +303,9 @@ button { font: inherit; cursor: pointer; }
 .person { margin-top: 2.4rem; }
 .arch-photo {
   position: relative;
-  width: min(15.5rem, 72vw);
-  aspect-ratio: 760 / 1142;
+  height: min(23rem, 84vw);
+  width: auto;
+  aspect-ratio: 1 / 2;
   margin: 0 auto 1.3rem;
   border-radius: 999px;
   overflow: hidden;
@@ -331,8 +332,8 @@ button { font: inherit; cursor: pointer; }
   margin-bottom: 1.8rem;
 }
 .arch-photo.big .ph-art { border-radius: inherit; }
-/* Foto Ivan versi full-body (strip tinggi) — bingkai lebih ramping & tinggi */
-.arch-photo.groom-full { width: min(11rem, 58vw); aspect-ratio: 600 / 1889; }
+/* Foto Ivan full-body (strip tinggi) — tinggi sama, tapi lebih ramping (aspek foto) */
+.arch-photo.groom-full { aspect-ratio: 600 / 1889; }
 
 .person-nick { font-size: 2.5rem; color: var(--ink-soft); line-height: 1; }
 .person-name { font-family: var(--serif); font-weight: 500; font-size: 1.5rem; letter-spacing: .06em; margin-top: .4rem; }
