@@ -82,7 +82,6 @@ window.WEDDING_CONFIG = {
 
   gifts: [
     { bank: "BCA", number: "0810889161", holder: "Sara Sioni Santoso" },
-    { bank: "BCA", number: "7370264435", holder: "Ivan Rusli" },
   ],
 
   // Galeri — isi path foto; "" akan memakai ilustrasi bawaan.
