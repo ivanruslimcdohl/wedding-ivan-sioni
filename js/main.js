@@ -333,7 +333,7 @@
   function renderWishes(wishes) {
     var box = $("wishes");
     if (!wishes || !wishes.length) {
-      box.innerHTML = '<p class="wishes-empty">Belum ada ucapan. Jadilah yang pertama!</p>';
+      box.innerHTML = "";
       return;
     }
     box.innerHTML = wishes
