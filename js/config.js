@@ -90,7 +90,6 @@ window.WEDDING_CONFIG = {
     "assets/img/gallery-1.jpg?v=2",
     "assets/img/gallery-2.jpg?v=3",
     "assets/img/gallery-3.jpg?v=2",
-    "assets/img/gallery-4.jpg?v=2",
     "assets/img/gallery-6.jpg?v=2",
   ],
 
