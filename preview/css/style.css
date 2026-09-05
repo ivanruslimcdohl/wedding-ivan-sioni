@@ -331,6 +331,8 @@ button { font: inherit; cursor: pointer; }
   margin-bottom: 1.8rem;
 }
 .arch-photo.big .ph-art { border-radius: inherit; }
+/* Foto Ivan versi full-body (strip tinggi) — bingkai lebih ramping & tinggi */
+.arch-photo.groom-full { width: min(11rem, 58vw); aspect-ratio: 600 / 1889; }
 
 .person-nick { font-size: 2.5rem; color: var(--ink-soft); line-height: 1; }
 .person-name { font-family: var(--serif); font-weight: 500; font-size: 1.5rem; letter-spacing: .06em; margin-top: .4rem; }
