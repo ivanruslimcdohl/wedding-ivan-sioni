@@ -12,7 +12,7 @@ window.WEDDING_CONFIG = {
       full: "Ivan Rusli",
       parents: "Putra dari Bapak Lie Sje Foek & Ibu Irene Khoe",
       instagram: "", // contoh: "ivanrusli" (tanpa @)
-      photo: "assets/img/groom.jpg?v=19", // foto potret ("" = ilustrasi bawaan)
+      photo: "assets/img/groom.jpg?v=20", // foto potret ("" = ilustrasi bawaan)
     },
     bride: {
       nick: "Sioni",
