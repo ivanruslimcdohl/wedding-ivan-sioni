@@ -7,233 +7,470 @@
   <meta name="description" content="Undangan pernikahan Ivan & Sioni" />
   <meta property="og:title" content="The Wedding of Ivan & Sioni" />
   <meta property="og:description" content="Kami mengundang Anda untuk hadir di hari bahagia kami." />
-  <meta name="theme-color" content="#0B3D2E" />
+  <meta name="theme-color" content="#F6F1E3" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Great+Vibes&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Great+Vibes&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css?v=fresco35" />
 </head>
-<body class="locked">
+<body class="locked assemble">
 
-  <!-- Partikel emas melayang -->
-  <canvas id="particles" aria-hidden="true"></canvas>
+  <!-- ============ KOLEKSI GAMBAR (dipakai ulang via <use>) ============ -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <linearGradient id="gSky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#F4EEDC"/>
+        <stop offset=".55" stop-color="#EFE9D2"/>
+        <stop offset="1" stop-color="#E6E2C8"/>
+      </linearGradient>
+      <linearGradient id="gMeadow" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#7C9860"/>
+        <stop offset="1" stop-color="#55763F"/>
+      </linearGradient>
+      <linearGradient id="gHillFar" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#C9D4C6"/>
+        <stop offset="1" stop-color="#AEBFAB"/>
+      </linearGradient>
+      <linearGradient id="gHillNear" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#9FB49B"/>
+        <stop offset="1" stop-color="#87A081"/>
+      </linearGradient>
+      <radialGradient id="gCanopy" cx=".4" cy=".35" r=".8">
+        <stop offset="0" stop-color="#9DB37E"/>
+        <stop offset="1" stop-color="#77925C"/>
+      </radialGradient>
+      <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+        <feGaussianBlur stdDeviation="4"/>
+      </filter>
 
-  <!-- Layer ambient: daun emas + light ray -->
-  <div class="ambient" aria-hidden="true">
-    <div class="light-ray"></div>
-    <svg class="leaf leaf-1" data-depth="1.4" viewBox="0 0 120 120" fill="none" stroke="#d4af37" stroke-width="1.3" stroke-linecap="round">
-      <path d="M12 112 Q45 80 58 40 Q62 26 60 12"/>
-      <path d="M46 62 Q30 58 22 44" /><path d="M46 62 Q56 48 54 34"/>
-      <path d="M55 40 Q42 34 38 22"/><path d="M55 40 Q64 30 63 18"/>
-      <ellipse cx="21" cy="43" rx="4" ry="9" transform="rotate(-38 21 43)"/>
-      <ellipse cx="53" cy="33" rx="3.6" ry="8" transform="rotate(-16 53 33)"/>
-      <ellipse cx="38" cy="21" rx="3.4" ry="7.6" transform="rotate(-30 38 21)"/>
-      <ellipse cx="63" cy="17" rx="3.2" ry="7" transform="rotate(-8 63 17)"/>
-    </svg>
-    <svg class="leaf leaf-2" data-depth="0.8" viewBox="0 0 120 120" fill="none" stroke="#d4af37" stroke-width="1.3" stroke-linecap="round">
-      <path d="M108 112 Q75 80 62 40 Q58 26 60 12"/>
-      <path d="M74 62 Q90 58 98 44"/><path d="M74 62 Q64 48 66 34"/>
-      <ellipse cx="99" cy="43" rx="4" ry="9" transform="rotate(38 99 43)"/>
-      <ellipse cx="67" cy="33" rx="3.6" ry="8" transform="rotate(16 67 33)"/>
-    </svg>
-    <svg class="leaf leaf-3" data-depth="2" viewBox="0 0 120 120" fill="none" stroke="#d4af37" stroke-width="1.2" stroke-linecap="round">
-      <path d="M10 10 Q40 36 55 76 Q60 92 58 108"/>
-      <path d="M42 56 Q26 60 18 74"/><path d="M42 56 Q52 70 50 84"/>
-      <ellipse cx="17" cy="75" rx="4" ry="9" transform="rotate(38 17 75)"/>
-      <ellipse cx="50" cy="85" rx="3.6" ry="8" transform="rotate(14 50 85)"/>
-    </svg>
-  </div>
+      <!-- Bunga peoni sederhana -->
+      <g id="peony">
+        <circle r="10" fill="#E3AEBB"/>
+        <circle r="6.6" cx="-2" cy="-1.6" fill="#EBC3CC"/>
+        <circle r="3.8" cx="1.4" cy="1" fill="#D791A3"/>
+        <circle r="1.7" cx="0" cy="0" fill="#C97B8F"/>
+      </g>
+      <g id="rosette">
+        <circle r="8" fill="#F0E7D6"/>
+        <circle r="5" cx="-1" cy="-1" fill="#F7F1E3"/>
+        <circle r="2.4" fill="#E2CFA9"/>
+      </g>
+      <g id="lilac">
+        <circle r="7" fill="#C9B7CE"/>
+        <circle r="4.2" cx="1.2" cy="-1" fill="#D8CADB"/>
+        <circle r="1.8" fill="#A98FB1"/>
+      </g>
+      <g id="leafSprig">
+        <path d="M0 0 Q6 -14 2 -26" fill="none" stroke="#7C9367" stroke-width="1.6" stroke-linecap="round"/>
+        <ellipse cx="-3" cy="-9" rx="3.4" ry="7" fill="#8AA271" transform="rotate(-24 -3 -9)"/>
+        <ellipse cx="7" cy="-16" rx="3" ry="6.4" fill="#7C9367" transform="rotate(18 7 -16)"/>
+      </g>
 
-  <!-- ============ COVER / GATE ============ -->
+      <!-- Merpati kertas -->
+      <g id="dove">
+        <path d="M-14 8 Q-4 2 2 2 Q14 0 24 -6 Q16 4 6 7 Q-2 10 -14 8 Z" fill="#FBF8F0" stroke="#C9C2AE" stroke-width=".8"/>
+        <path class="dv-wing" d="M4 2 Q0 -10 10 -20 Q13 -8 9 0 Z" fill="#EFE8D4" stroke="#C9C2AE" stroke-width=".8"/>
+        <circle cx="20" cy="-4" r=".9" fill="#6E7D6A"/>
+      </g>
+
+      <!-- Kupu-kupu -->
+      <g id="butterfly">
+        <g class="bf-wing bf-wing-l">
+          <path d="M0 0 C-10 -12 -22 -10 -20 -2 C-19 4 -8 6 0 2 Z" fill="#8FA8C6" opacity=".9"/>
+          <path d="M0 2 C-9 8 -16 14 -11 17 C-7 19 -2 12 0 6 Z" fill="#6E8BAF" opacity=".9"/>
+        </g>
+        <g class="bf-wing bf-wing-r">
+          <path d="M0 0 C10 -12 22 -10 20 -2 C19 4 8 6 0 2 Z" fill="#8FA8C6" opacity=".9"/>
+          <path d="M0 2 C9 8 16 14 11 17 C7 19 2 12 0 6 Z" fill="#6E8BAF" opacity=".9"/>
+        </g>
+        <ellipse cx="0" cy="4" rx="1.4" ry="6" fill="#4C5B49"/>
+      </g>
+
+      <!-- Buket untuk mahkota kartu -->
+      <g id="bouquet">
+        <use href="#leafSprig" transform="translate(-26 6) rotate(-38) scale(1.25)"/>
+        <use href="#leafSprig" transform="translate(26 6) rotate(38) scale(-1.25 1.25)"/>
+        <use href="#leafSprig" transform="translate(-8 2) rotate(-10)"/>
+        <use href="#leafSprig" transform="translate(10 2) rotate(12) scale(-1 1)"/>
+        <use href="#lilac" transform="translate(-24 -2) scale(.9)"/>
+        <use href="#lilac" transform="translate(25 -3) scale(.8)"/>
+        <use href="#rosette" transform="translate(-12 -8)"/>
+        <use href="#rosette" transform="translate(14 -7) scale(.9)"/>
+        <use href="#peony" transform="translate(0 -12) scale(1.15)"/>
+        <use href="#peony" transform="translate(-30 4) scale(.55)"/>
+        <use href="#peony" transform="translate(30 4) scale(.55)"/>
+      </g>
+
+      <!-- Perlengkapan mural vintage -->
+      <linearGradient id="gHaze" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#F2ECD9" stop-opacity=".9"/>
+        <stop offset="1" stop-color="#F2ECD9" stop-opacity="0"/>
+      </linearGradient>
+      <filter id="leafy" x="-30%" y="-30%" width="160%" height="160%">
+        <feGaussianBlur stdDeviation="1"/>
+      </filter>
+      <!-- Gumpalan dedaunan bergerigi (warna via atribut color) -->
+      <g id="clump">
+        <path fill="currentColor" d="M-24 6 C-31 0 -28 -11 -18 -13 C-17 -21 -6 -25 2 -20 C12 -25 23 -19 22 -9 C30 -4 27 8 17 10 C13 17 0 19 -7 13 C-17 16 -25 13 -24 6 Z"/>
+        <path fill="#1E2A18" opacity=".18" d="M-20 8 C-24 4 -22 -2 -15 -3 C-8 -6 2 -4 6 2 C10 8 4 13 -4 12 C-12 13 -18 12 -20 8 Z"/>
+        <path fill="#F7F3E4" opacity=".16" d="M-2 -16 C4 -20 14 -17 16 -10 C18 -5 13 -1 6 -2 C-1 -1 -6 -5 -5 -10 C-5 -13 -4 -15 -2 -16 Z"/>
+      </g>
+      <!-- Bunga mekar bergaya lukisan (warna via atribut color) -->
+      <g id="bloom">
+        <circle r="11" fill="currentColor"/>
+        <circle cx="-5.5" cy="-3.5" r="6.5" fill="#FFFDF6" opacity=".3"/>
+        <circle cx="5" cy="4.5" r="7" fill="#3A2A22" opacity=".12"/>
+        <circle cx="2" cy="-4.5" r="5.5" fill="#FFFDF6" opacity=".22"/>
+        <circle r="3.2" fill="#3A2A22" opacity=".2"/>
+      </g>
+
+      <!-- MURAL vintage: lembah berkabut, pohon membingkai, rusa jantan, pagar & bunga -->
+      <g id="muralArt">
+        <rect id="mSky" width="480" height="680" fill="url(#gSky)"/>
+        <g id="mClouds" filter="url(#soft)" opacity=".55">
+          <ellipse cx="140" cy="110" rx="110" ry="30" fill="#DDD9C4"/>
+          <ellipse cx="350" cy="170" rx="130" ry="34" fill="#D6D3BE"/>
+          <ellipse cx="240" cy="250" rx="150" ry="36" fill="#DCD8C3" opacity=".8"/>
+          <ellipse cx="70" cy="300" rx="90" ry="26" fill="#D2D0BC" opacity=".8"/>
+          <ellipse cx="420" cy="80" rx="80" ry="22" fill="#E2DEC9"/>
+        </g>
+
+        <path id="mHill1" d="M0 430 Q60 380 110 402 Q160 330 235 296 Q300 330 340 392 Q400 356 440 400 Q462 412 480 406 L480 680 L0 680 Z" fill="url(#gHillFar)"/>
+        <path id="mHill2" d="M0 480 Q80 424 150 452 Q230 408 310 446 Q390 420 480 462 L480 680 L0 680 Z" fill="url(#gHillNear)"/>
+        <rect x="0" y="430" width="480" height="70" fill="url(#gHaze)" opacity=".7"/>
+        <path id="mHill3" d="M0 528 Q120 496 240 512 Q370 528 480 508 L480 680 L0 680 Z" fill="url(#gMeadow)"/>
+
+        <!-- pohon kiri: kanopi menggantung membingkai sudut atas -->
+        <g id="mTreeL">
+          <path d="M-6 208 C 40 196, 78 176, 112 150 M-6 130 C 30 122, 60 104, 84 84 M-4 268 C 32 258, 60 244, 82 228"
+                stroke="#55462F" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+          <use href="#clump" color="#43603D" transform="translate(28 78) scale(1.5)"/>
+          <use href="#clump" color="#5C7A50" transform="translate(84 60) scale(1.25) rotate(-12)"/>
+          <use href="#clump" color="#4E6A45" transform="translate(56 96) scale(1.4) rotate(8)"/>
+          <use href="#clump" color="#43603D" transform="translate(120 118) scale(1.15) rotate(10)"/>
+          <use href="#clump" color="#6B8659" transform="translate(58 132) scale(1.35)"/>
+          <use href="#clump" color="#4E6A45" transform="translate(92 148) scale(1.3) rotate(-6)"/>
+          <use href="#clump" color="#5C7A50" transform="translate(112 172) scale(1.05) rotate(-8)"/>
+          <use href="#clump" color="#43603D" transform="translate(30 176) scale(1.3) rotate(6)"/>
+          <use href="#clump" color="#5C7A50" transform="translate(56 200) scale(1.25) rotate(10)"/>
+          <use href="#clump" color="#6B8659" transform="translate(74 216) scale(1.1)"/>
+          <use href="#clump" color="#43603D" transform="translate(44 228) scale(1.15) rotate(-6)"/>
+          <use href="#clump" color="#5C7A50" transform="translate(24 246) scale(1.05) rotate(-10)"/>
+          <use href="#clump" color="#43603D" transform="translate(96 254) scale(.85)"/>
+        </g>
+
+        <!-- pohon kanan -->
+        <g id="mTreeR">
+          <path d="M486 190 C 440 180, 404 160, 372 132 M486 112 C 452 104, 424 88, 402 66 M484 248 C 450 240, 424 226, 404 210"
+                stroke="#55462F" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+          <use href="#clump" color="#43603D" transform="translate(452 66) scale(1.5)"/>
+          <use href="#clump" color="#5C7A50" transform="translate(398 52) scale(1.2) rotate(12)"/>
+          <use href="#clump" color="#4E6A45" transform="translate(426 92) scale(1.4) rotate(-8)"/>
+          <use href="#clump" color="#6B8659" transform="translate(362 106) scale(1.15) rotate(-8)"/>
+          <use href="#clump" color="#43603D" transform="translate(424 122) scale(1.35)"/>
+          <use href="#clump" color="#4E6A45" transform="translate(392 138) scale(1.3) rotate(6)"/>
+          <use href="#clump" color="#5C7A50" transform="translate(372 162) scale(1.05) rotate(8)"/>
+          <use href="#clump" color="#43603D" transform="translate(448 168) scale(1.25) rotate(-6)"/>
+          <use href="#clump" color="#5C7A50" transform="translate(424 190) scale(1.2) rotate(-10)"/>
+          <use href="#clump" color="#6B8659" transform="translate(408 206) scale(1.05)"/>
+          <use href="#clump" color="#43603D" transform="translate(444 218) scale(1.1) rotate(8)"/>
+          <use href="#clump" color="#5C7A50" transform="translate(456 238) scale(1) rotate(10)"/>
+          <!-- pohon kecil di kejauhan -->
+          <path d="M448 470 C 448 452, 447 436, 448 420" stroke="#6B5A42" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+          <use href="#clump" color="#7E9468" transform="translate(447 408) scale(.7)"/>
+          <use href="#clump" color="#6B8659" transform="translate(432 424) scale(.55) rotate(-10)"/>
+          <use href="#clump" color="#7E9468" transform="translate(462 426) scale(.5) rotate(12)"/>
+        </g>
+
+        <!-- rusa jantan di padang -->
+        <g id="mDeer">
+          <g stroke="#6B4A2E" fill="none" stroke-linecap="round">
+            <path d="M209 470 C 204 452, 206 434, 216 420 M215 470 C 216 450, 224 432, 238 422" stroke-width="3.6"/>
+            <path d="M207 456 C 199 449, 195 440, 195 432 M210 442 C 203 435, 201 427, 202 419 M216 420 C 221 412, 229 407, 238 406
+                     M221 452 C 228 444, 236 441, 243 442 M229 438 C 236 429, 244 425, 251 426 M238 422 C 245 414, 254 410, 262 410" stroke-width="2.4"/>
+          </g>
+          <path fill="#8B5F3C" d="M212 555 C 208 538, 222 528, 244 527 C 268 526, 288 532, 293 548 C 297 562, 293 576, 281 581 C 262 587, 238 587, 224 581 C 213 576, 208 566, 212 555 Z"/>
+          <path fill="#8B5F3C" d="M222 540 C 215 524, 210 506, 206 488 L 224 481 C 229 498, 232 516, 237 533 Z"/>
+          <path fill="#8B5F3C" d="M206 489 C 198 487, 191 482, 188 475 C 186 470, 189 466, 194 467 L 211 471 C 217 474, 219 481, 215 486 C 212 489, 209 490, 206 489 Z"/>
+          <circle cx="190" cy="471" r="1.8" fill="#3A2A1C"/>
+          <ellipse cx="223" cy="465" rx="3.6" ry="7.5" fill="#7E5636" transform="rotate(-28 223 465)"/>
+          <path fill="#F2E8D8" opacity=".8" d="M219 534 C 213 540, 210 550, 212 560 C 215 566, 221 565, 223 557 C 225 547, 223 539, 219 534 Z"/>
+          <path fill="#7E5636" d="M291 544 C 297 540, 302 544, 298 550 C 295 553, 290 551, 291 544 Z"/>
+          <g stroke="#7E5636" stroke-width="5" fill="none" stroke-linecap="round">
+            <path d="M232 583 C 230 604, 229 622, 228 638 M250 585 C 250 606, 250 624, 251 640 M272 582 C 278 600, 277 618, 275 638 M286 576 C 293 596, 292 616, 290 636"/>
+          </g>
+          <g stroke="#4A3A28" stroke-width="5" stroke-linecap="round">
+            <path d="M228 638 L 227.5 646 M251 640 L 251 648 M275 638 L 274.5 646 M290 636 L 289.5 644"/>
+          </g>
+        </g>
+
+        <!-- pagar kayu & gerombolan bunga -->
+        <g id="mFlora">
+          <g fill="#8A6B48" stroke="#6B5138" stroke-width="1.4">
+            <rect x="16" y="560" width="10" height="52" rx="4" transform="rotate(-3 21 586)"/>
+            <rect x="52" y="556" width="10" height="54" rx="4"/>
+            <rect x="88" y="559" width="10" height="52" rx="4" transform="rotate(3 93 585)"/>
+            <rect x="124" y="562" width="10" height="48" rx="4" transform="rotate(-2 129 586)"/>
+            <rect x="8" y="572" width="134" height="7" rx="3.5"/>
+            <rect x="8" y="592" width="134" height="7" rx="3.5"/>
+          </g>
+          <g fill="#8A6B48" stroke="#6B5138" stroke-width="1.4">
+            <rect x="352" y="556" width="10" height="54" rx="4" transform="rotate(2 357 583)"/>
+            <rect x="388" y="552" width="10" height="56" rx="4"/>
+            <rect x="424" y="556" width="10" height="52" rx="4" transform="rotate(-3 429 582)"/>
+            <rect x="458" y="560" width="10" height="50" rx="4"/>
+            <rect x="346" y="568" width="128" height="7" rx="3.5"/>
+            <rect x="346" y="588" width="128" height="7" rx="3.5"/>
+          </g>
+          <g filter="url(#leafy)">
+            <use href="#clump" color="#4E683C" transform="translate(46 634) scale(1.5)"/>
+            <use href="#clump" color="#5F7B49" transform="translate(112 648) scale(1.3) rotate(8)"/>
+            <use href="#clump" color="#4E683C" transform="translate(420 640) scale(1.55) rotate(-6)"/>
+            <use href="#clump" color="#5F7B49" transform="translate(356 654) scale(1.25)"/>
+          </g>
+          <use href="#leafSprig" transform="translate(96 606) scale(1.7) rotate(14)"/>
+          <use href="#leafSprig" transform="translate(20 612) scale(1.6) rotate(-20)"/>
+          <use href="#leafSprig" transform="translate(388 602) scale(-1.7 1.7) rotate(-12)"/>
+          <use href="#leafSprig" transform="translate(462 610) scale(-1.6 1.6) rotate(16)"/>
+          <use href="#bloom" color="#D9A0AC" transform="translate(38 608) scale(1.35)"/>
+          <use href="#bloom" color="#F2E8D8" transform="translate(82 596) scale(1.05)"/>
+          <use href="#bloom" color="#B9A6C6" transform="translate(16 640) scale(1.15)"/>
+          <use href="#bloom" color="#F7F3EA" transform="translate(70 644) scale(1.25)"/>
+          <use href="#bloom" color="#C87F92" transform="translate(114 626) scale(.95)"/>
+          <use href="#bloom" color="#D9A0AC" transform="translate(128 594) scale(.8)"/>
+          <use href="#bloom" color="#F7F3EA" transform="translate(444 600) scale(1.3)"/>
+          <use href="#bloom" color="#C87F92" transform="translate(400 612) scale(1.1)"/>
+          <use href="#bloom" color="#B9A6C6" transform="translate(468 636) scale(1.05)"/>
+          <use href="#bloom" color="#D9A0AC" transform="translate(418 648) scale(1.2)"/>
+          <use href="#bloom" color="#F2E8D8" transform="translate(368 632) scale(.9)"/>
+          <use href="#bloom" color="#B9A6C6" transform="translate(360 598) scale(.75)"/>
+        </g>
+
+        <g id="mBf">
+          <use href="#butterfly" transform="translate(148 520) scale(.5) rotate(-10)"/>
+          <use href="#butterfly" transform="translate(330 490) scale(.4) rotate(12)"/>
+        </g>
+      </g>
+    </defs>
+  </svg>
+
+  <!-- ============ SAMPUL / GERBANG ============ -->
   <div id="cover" class="cover">
-    <div class="cover-panel cover-panel-left" aria-hidden="true"></div>
-    <div class="cover-panel cover-panel-right" aria-hidden="true"></div>
-    <div class="cover-sweep" aria-hidden="true"></div>
-    <div class="cover-frame" aria-hidden="true"></div>
+    <svg class="cover-art art-main" viewBox="0 0 480 680" preserveAspectRatio="xMidYMid slice">
+      <use href="#mSky"/>
+      <use class="m-cloud" href="#mClouds"/>
+      <use class="m-hill1" href="#mHill1"/>
+      <use class="m-hill2" href="#mHill2"/>
+      <use class="m-hill3" href="#mHill3"/>
+      <use class="m-tree-l" href="#mTreeL"/>
+      <use class="m-tree-r" href="#mTreeR"/>
+      <use class="m-deer" href="#mDeer"/>
+      <use class="m-flora" href="#mFlora"/>
+      <use class="m-bf" href="#mBf"/>
+    </svg>
+    <img id="cover-photo" class="cover-photo" alt="" hidden />
+    <div class="cover-veil"></div>
     <div class="cover-inner">
-      <div class="anim" style="--d:.1s">
-        <svg class="ornament-top" viewBox="0 0 120 40" aria-hidden="true">
-          <path d="M60 4 L66 20 L60 36 L54 20 Z" fill="none" stroke="currentColor" stroke-width="1.2"/>
-          <path d="M10 20 H48 M72 20 H110" stroke="currentColor" stroke-width="1"/>
-          <circle cx="60" cy="20" r="2.5" fill="currentColor"/>
-        </svg>
-      </div>
-      <p class="eyebrow anim" style="--d:.25s">The Wedding Of</p>
-      <h1 class="script-name anim" style="--d:.4s">Ivan <span class="amp">&amp;</span> Sioni</h1>
-      <div class="gold-divider anim" style="--d:.55s"></div>
-      <p class="to-label anim" style="--d:.7s">Kepada Yth. Bapak/Ibu/Saudara/i</p>
-      <p id="guest-name" class="guest-name anim" style="--d:.85s">Tamu Undangan</p>
-      <button id="open-btn" class="btn-gold anim" style="--d:1s">
-        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+      <img class="cover-mono cv" style="--d:.05s" src="assets/img/monogram.png?v=2" alt="" aria-hidden="true" />
+      <p class="eyebrow cv" style="--d:.15s">The Wedding Of</p>
+      <h1 class="script cover-names cv" style="--d:.35s">Ivan <span class="amp">&amp;</span> Sioni</h1>
+      <div class="rule-dot cv" style="--d:.55s"><span></span></div>
+      <p class="to-label cv" style="--d:.7s">Kepada Yth. Bapak/Ibu/Saudara/i</p>
+      <p id="guest-name" class="guest-name cv" style="--d:.85s">Tamu Undangan</p>
+      <button id="open-btn" class="btn shine cv" style="--d:1s">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
         Buka Undangan
       </button>
     </div>
   </div>
 
   <!-- Musik -->
-  <audio id="bg-music" loop preload="none"></audio>
+  <audio id="bg-music" preload="none"></audio>
   <button id="music-btn" class="music-btn" hidden aria-label="Putar / jeda musik">
-    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M9 18.5a2.5 2.5 0 1 1-2.5-2.5c.17 0 .34.02.5.05V6l11-2v11.5a2.5 2.5 0 1 1-2.5-2.5c.17 0 .34.02.5.05V7.6l-7 1.27v9.63Z"/></svg>
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M9 18.5a2.5 2.5 0 1 1-2.5-2.5c.17 0 .34.02.5.05V6l11-2v11.5a2.5 2.5 0 1 1-2.5-2.5c.17 0 .34.02.5.05V7.6l-7 1.27v9.63Z"/></svg>
   </button>
 
-  <!-- Progress scroll + cincin yang meluncur di ujungnya -->
-  <div id="scroll-progress" class="scroll-progress" aria-hidden="true"></div>
-  <span id="progress-ring" class="scroll-ring" aria-hidden="true">💍</span>
+  <!-- ============ KOLOM UNDANGAN ============ -->
+  <main class="column">
 
-  <!-- ============ SCENE STACK (sticky + ScrollTrigger scrub) ============ -->
-  <main id="story" class="story">
+    <!-- 1. PEMBUKA: mural + nama -->
+    <section class="panel panel-hero">
+      <div class="hero-art art-main" aria-hidden="true">
+        <img class="mm" src="assets/img/mural/sky.jpg" alt="" />
+        <img class="mm m-cloud" src="assets/img/mural/clouds.png" alt="" />
+        <img class="mm m-hill1" src="assets/img/mural/mtn.png" alt="" />
+        <img class="mm m-hill3" src="assets/img/mural/meadow.png?v=2" alt="" />
+        <img class="mm m-tree-l" src="assets/img/mural/tree-l.png?v=2" alt="" />
+        <img class="mm m-tree-r" src="assets/img/mural/tree-r.png?v=2" alt="" />
+        <img class="mm m-deer" src="assets/img/mural/swans.png?v=2" alt="" />
+        <img class="mm m-flora" src="assets/img/mural/flora.png?v=2" alt="" />
+        <img class="mm m-bf" src="assets/img/mural/bf.png" alt="" />
+      </div>
+      <div class="hero-grad"></div>
+      <svg class="hero-dove" viewBox="-20 -26 50 42" aria-hidden="true"><use href="#dove"/></svg>
+      <svg class="hero-dove hero-dove2" viewBox="-20 -26 50 42" aria-hidden="true"><use href="#dove"/></svg>
+      <div class="hero-text">
+        <p class="eyebrow rv">The Wedding Of</p>
+        <h2 class="script hero-names rv">Ivan <span class="amp">&amp;</span> Sioni</h2>
+        <p class="hero-date rv" id="hero-date">03 . 10 . 2026</p>
+      </div>
+    </section>
 
-    <!-- 1. HERO -->
-    <div class="scene scene-hero">
-      <section class="panel slide-hero">
-        <div class="slide-decor">Love</div>
-        <div class="slide-inner">
-          <svg class="monogram-svg anim" style="--d:.2s" viewBox="0 0 120 120" aria-hidden="true">
-            <circle class="mono-ring-outer" cx="60" cy="60" r="56" fill="none" stroke="#d4af37" stroke-width="1"/>
-            <circle class="mono-ring-inner" cx="60" cy="60" r="49" fill="none" stroke="rgba(212,175,55,0.35)" stroke-width="1"/>
-            <text class="mono-text" x="60" y="60" text-anchor="middle" dominant-baseline="central">I<tspan class="mono-amp" dy="2"> &amp; </tspan>S</text>
-          </svg>
-          <p class="eyebrow anim" style="--d:.45s">We Are Getting Married</p>
-          <h2 class="script-name big anim" style="--d:.6s">Ivan <span class="amp">&amp;</span> Sioni</h2>
-          <div class="gold-divider anim" style="--d:.8s"></div>
-          <p id="hero-date" class="hero-date anim" style="--d:.95s">12 . 12 . 2026</p>
-          <blockquote class="quote anim" style="--d:1.1s">
-            <p id="quote-text"></p>
-            <cite id="quote-source"></cite>
-          </blockquote>
+    <!-- 2. KARTU LENGKUNG: ayat + countdown -->
+    <section class="panel panel-cream texture">
+      <div class="arch-card sage rv">
+        <img class="crown" src="assets/img/mural/crown.png" alt="" aria-hidden="true" />
+        <p class="script arch-lead">We are</p>
+        <h2 class="serif-title tight">getting married</h2>
+        <blockquote class="quote rv">
+          <p id="quote-text"></p>
+          <cite id="quote-source"></cite>
+        </blockquote>
+        <div id="countdown" class="countdown rv">
+          <div class="count-box"><span id="cd-days">0</span><small>Hari</small></div>
+          <div class="count-box"><span id="cd-hours">0</span><small>Jam</small></div>
+          <div class="count-box"><span id="cd-mins">0</span><small>Menit</small></div>
+          <div class="count-box"><span id="cd-secs">0</span><small>Detik</small></div>
         </div>
-        <div class="swipe-hint" aria-hidden="true">
-          <span>Scroll ke bawah</span>
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        <p id="countdown-over" class="countdown-over" hidden>Puji Tuhan, acara telah berlangsung. Terima kasih atas doa dan restunya.</p>
+        <a id="save-date-btn" class="btn ghost rv" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+          Save the Date
+        </a>
+      </div>
+    </section>
+
+    <!-- 3. KISAH CINTA — disembunyikan sementara (hapus `hidden` utk menampilkan lagi) -->
+    <section class="panel panel-cream texture" hidden>
+      <h2 class="script section-script rv">Our Love Story</h2>
+      <div id="story-list" class="story-list"></div>
+    </section>
+
+    <!-- 4. MEMPELAI -->
+    <section class="panel panel-sage">
+      <h2 class="script section-script rv">Bride and Groom</h2>
+      <p class="section-intro rv">Dengan penuh sukacita dan atas berkat serta kasih karunia Tuhan, kami mengundang Anda untuk hadir dalam pernikahan kami</p>
+
+      <div class="person rv">
+        <div class="arch-photo">
+          <svg class="ph-art" viewBox="0 424 240 256" preserveAspectRatio="xMidYMid slice"><use href="#muralArt"/></svg>
+          <img id="bride-photo" alt="Foto mempelai wanita" hidden />
+          <span class="script ph-initial">S</span>
         </div>
-      </section>
-    </div>
+        <p class="script person-nick">Sioni</p>
+        <h3 id="bride-full" class="person-name"></h3>
+        <div class="rule-dot"><span></span></div>
+        <p id="bride-parents" class="person-parents"></p>
+        <a id="bride-ig" class="ig-link" target="_blank" rel="noopener" hidden>
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".9" fill="currentColor" stroke="none"/></svg>
+          <span></span>
+        </a>
+      </div>
 
-    <!-- 2. MEMPELAI -->
-    <div class="scene scene-couple">
-      <section class="panel slide-couple">
-        <div class="slide-decor">Together</div>
-        <div class="slide-inner">
-          <p class="eyebrow anim" style="--d:.2s">Shalom</p>
-          <p class="section-intro anim" style="--d:.35s">Dengan penuh sukacita dan atas berkat serta kasih karunia Tuhan, kami mengundang Anda untuk hadir dalam pernikahan kami:</p>
+      <div class="script big-amp rv">&amp;</div>
 
-          <div class="person anim" style="--d:.5s">
-            <div class="photo-ring"><img id="groom-photo" src="assets/img/groom.svg" alt="Foto mempelai pria" /></div>
-            <h3 id="groom-full" class="person-name"></h3>
-            <p id="groom-parents" class="person-parents"></p>
-            <a id="groom-ig" class="ig-link" target="_blank" rel="noopener" hidden>
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".9" fill="currentColor" stroke="none"/></svg>
-              <span></span>
-            </a>
-          </div>
-
-          <div class="script-amp anim" style="--d:.7s">&amp;</div>
-
-          <div class="person anim" style="--d:.85s">
-            <div class="photo-ring"><img id="bride-photo" src="assets/img/bride.svg" alt="Foto mempelai wanita" /></div>
-            <h3 id="bride-full" class="person-name"></h3>
-            <p id="bride-parents" class="person-parents"></p>
-            <a id="bride-ig" class="ig-link" target="_blank" rel="noopener" hidden>
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".9" fill="currentColor" stroke="none"/></svg>
-              <span></span>
-            </a>
-          </div>
+      <div class="person rv">
+        <div class="arch-photo groom-full">
+          <svg class="ph-art" viewBox="240 424 240 256" preserveAspectRatio="xMidYMid slice"><use href="#muralArt"/></svg>
+          <img id="groom-photo" alt="Foto mempelai pria" hidden />
+          <span class="script ph-initial">I</span>
         </div>
-      </section>
-    </div>
+        <p class="script person-nick">Ivan</p>
+        <h3 id="groom-full" class="person-name"></h3>
+        <div class="rule-dot"><span></span></div>
+        <p id="groom-parents" class="person-parents"></p>
+        <a id="groom-ig" class="ig-link" target="_blank" rel="noopener" hidden>
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".9" fill="currentColor" stroke="none"/></svg>
+          <span></span>
+        </a>
+      </div>
+    </section>
 
-    <!-- 3. ACARA -->
-    <div class="scene scene-event">
-      <section class="panel slide-event">
-        <div class="slide-decor">Moments</div>
-        <div class="slide-inner">
-          <h2 class="section-title anim" style="--d:.2s">Rangkaian Acara</h2>
-          <div class="gold-divider anim" style="--d:.35s"></div>
+    <!-- 5. ACARA -->
+    <section class="panel panel-cream texture">
+      <div class="arch-card sage rv">
+        <h2 class="serif-title">Wedding Event</h2>
+        <p class="section-intro">Dengan berkat Tuhan, kami dengan sukacita mengundang Anda untuk berbagi kebahagiaan pada hari pernikahan kami</p>
 
-          <div class="event-card anim" style="--d:.5s">
-            <h3 id="akad-title" class="event-name"></h3>
-            <p id="akad-date" class="event-date"></p>
-            <p id="akad-time" class="event-time"></p>
-            <p id="akad-venue" class="event-venue"></p>
-            <p id="akad-address" class="event-address"></p>
-            <a id="akad-maps" class="btn-outline" target="_blank" rel="noopener">
-              <svg class="pin-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+        <div class="event-card rv">
+          <div class="ev-inner">
+            <h3 id="akad-title" class="script ev-name"></h3>
+            <div class="rule-dot"><span></span></div>
+            <p id="akad-date" class="ev-date"></p>
+            <p id="akad-time" class="ev-time"></p>
+            <div class="rule-house" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 11l9-7 9 7M5 10v9h14v-9"/></svg></div>
+            <p id="akad-venue" class="ev-venue"></p>
+            <p id="akad-address" class="ev-address"></p>
+            <a id="akad-maps" class="btn small" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
               Lihat Lokasi
             </a>
           </div>
+        </div>
 
-          <div class="event-card anim" style="--d:.7s">
-            <h3 id="resepsi-title" class="event-name"></h3>
-            <p id="resepsi-date" class="event-date"></p>
-            <p id="resepsi-time" class="event-time"></p>
-            <p id="resepsi-venue" class="event-venue"></p>
-            <p id="resepsi-address" class="event-address"></p>
-            <a id="resepsi-maps" class="btn-outline" target="_blank" rel="noopener">
-              <svg class="pin-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+        <div class="event-card rv">
+          <div class="ev-inner">
+            <h3 id="resepsi-title" class="script ev-name"></h3>
+            <div class="rule-dot"><span></span></div>
+            <p id="resepsi-date" class="ev-date"></p>
+            <p id="resepsi-time" class="ev-time"></p>
+            <div class="rule-house" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 11l9-7 9 7M5 10v9h14v-9"/></svg></div>
+            <p id="resepsi-venue" class="ev-venue"></p>
+            <p id="resepsi-address" class="ev-address"></p>
+            <a id="resepsi-maps" class="btn small" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
               Lihat Lokasi
             </a>
           </div>
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
 
-    <!-- 4. COUNTDOWN -->
-    <div class="scene scene-countdown">
-      <section class="panel slide-countdown">
-        <div class="slide-decor">Soon</div>
-        <div class="slide-inner">
-          <h2 class="section-title anim" style="--d:.2s">Menghitung Hari</h2>
-          <div class="gold-divider anim" style="--d:.35s"></div>
-          <p class="section-intro anim" style="--d:.5s">Menuju hari bahagia kami</p>
+    <!-- 6. AMPLOP DIGITAL -->
+    <section class="panel panel-sage">
+      <div class="plain-card rv">
+        <h2 class="serif-title">Wedding Gift</h2>
+        <p class="section-intro">Kehadiran Anda adalah hadiah terindah bagi kami. Namun jika memberi adalah ungkapan tanda kasih, Anda dapat memberi melalui:</p>
+        <button id="gift-toggle" class="btn" type="button">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M3 12h18M12 8v13M12 8c-2 0-5-1-5-3.5C7 2 11 2.5 12 6c1-3.5 5-4 5-1.5C17 7 14 8 12 8Z"/></svg>
+          Amplop Digital
+        </button>
+        <div id="gift-list" class="gift-list" hidden></div>
+      </div>
+    </section>
 
-          <div id="countdown" class="countdown anim" style="--d:.65s">
-            <div class="count-box"><span id="cd-days">0</span><small>Hari</small></div>
-            <div class="count-box"><span id="cd-hours">0</span><small>Jam</small></div>
-            <div class="count-box"><span id="cd-mins">0</span><small>Menit</small></div>
-            <div class="count-box"><span id="cd-secs">0</span><small>Detik</small></div>
-          </div>
-          <p id="countdown-over" class="countdown-over" hidden>Puji Tuhan, acara telah berlangsung. Terima kasih atas doa dan restunya. 🤍</p>
+    <!-- 7. GALERI -->
+    <section class="panel panel-cream texture">
+      <h2 class="script section-script rv">Our Gallery</h2>
+      <div id="gallery-grid" class="gallery-grid"></div>
+      <!-- Merpati kertas melintas saat galeri terlihat -->
+      <div class="doves rv" aria-hidden="true">
+        <svg class="dove dv1" viewBox="-20 -26 50 42"><use href="#dove"/></svg>
+        <svg class="dove dv2" viewBox="-20 -26 50 42"><use href="#dove"/></svg>
+        <svg class="dove dv3" viewBox="-20 -26 50 42"><use href="#dove"/></svg>
+      </div>
+    </section>
 
-          <a id="save-date-btn" class="btn-gold anim" style="--d:.85s" target="_blank" rel="noopener">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
-            Save the Date
-          </a>
-        </div>
-      </section>
-    </div>
-
-    <!-- 5. GALERI (filmstrip horizontal) -->
-    <div class="scene scene-gallery">
-      <section class="panel slide-gallery">
-        <div class="slide-decor">Memories</div>
-        <div class="slide-inner">
-          <h2 class="section-title anim" style="--d:.2s">Galeri Cinta Kami</h2>
-          <div class="gold-divider anim" style="--d:.35s"></div>
-          <div class="gallery-viewport anim" style="--d:.5s">
-            <div id="gallery-strip" class="gallery-strip"></div>
-          </div>
-          <p id="gallery-counter" class="gallery-counter anim" style="--d:.6s">1 / 6</p>
-        </div>
-      </section>
-    </div>
-
-    <!-- 6. RSVP & UCAPAN (mengalir normal, tidak sticky) -->
-    <div class="scene scene-rsvp">
-      <section class="panel slide-rsvp">
-        <div class="slide-decor">Wishes</div>
-        <div class="slide-inner rsvp-inner">
-          <h2 class="section-title anim" style="--d:.2s">RSVP &amp; Ucapan</h2>
-          <div class="gold-divider anim" style="--d:.3s"></div>
-
-          <form id="rsvp-form" class="rsvp-form anim" style="--d:.45s">
-            <input type="text" id="rsvp-name" name="name" placeholder="Nama Anda" required maxlength="60" autocomplete="name" />
-            <div class="rsvp-row">
+    <!-- 8. UCAPAN & DOA -->
+    <section class="panel panel-cream texture">
+      <div class="plain-card rv">
+        <h2 class="serif-title">Wedding Wish</h2>
+        <p class="section-intro">Tinggalkan ucapan dan doa terbaik Anda untuk perjalanan baru kami</p>
+        <form id="rsvp-form" class="rsvp-form">
+          <label for="rsvp-name">Nama</label>
+          <input type="text" id="rsvp-name" name="name" placeholder="Nama Anda" required maxlength="60" autocomplete="name" />
+          <div class="rsvp-row">
+            <div>
+              <label for="rsvp-attendance">Kehadiran</label>
               <select id="rsvp-attendance" name="attendance" required>
-                <option value="" disabled selected>Kehadiran</option>
+                <option value="" disabled selected>Pilih…</option>
                 <option value="Hadir">Ya, Saya Akan Hadir</option>
                 <option value="Tidak Hadir">Berhalangan Hadir</option>
               </select>
+            </div>
+            <div>
+              <label for="rsvp-guests">Jumlah Tamu</label>
               <select id="rsvp-guests" name="guests">
                 <option value="1">1 orang</option>
                 <option value="2">2 orang</option>
@@ -241,64 +478,52 @@
                 <option value="4">4 orang</option>
               </select>
             </div>
-            <textarea id="rsvp-message" name="message" rows="3" placeholder="Tuliskan ucapan & doa untuk kami…" maxlength="500"></textarea>
-            <button type="submit" class="btn-gold btn-submit">Kirim Ucapan</button>
-          </form>
-
-          <div id="wishes" class="wishes anim" style="--d:.6s">
-            <p class="wishes-empty">Memuat ucapan…</p>
           </div>
+          <label for="rsvp-message">Ucapan &amp; Doa</label>
+          <textarea id="rsvp-message" name="message" rows="3" placeholder="Tuliskan ucapan & doa untuk kami…" maxlength="500"></textarea>
+          <button type="submit" class="btn btn-submit">Kirim Ucapan</button>
+        </form>
+        <div id="wishes" class="wishes">
+          <p class="wishes-empty">Memuat ucapan…</p>
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
 
-    <!-- 7. AMPLOP DIGITAL -->
-    <div class="scene scene-gift">
-      <section class="panel slide-gift">
-        <div class="slide-decor">Gratitude</div>
-        <div class="slide-inner">
-          <h2 class="section-title anim" style="--d:.2s">Amplop Digital</h2>
-          <div class="gold-divider anim" style="--d:.35s"></div>
-          <p class="section-intro anim" style="--d:.5s">Doa restu Anda merupakan karunia yang sangat berarti bagi kami. Namun jika memberi adalah ungkapan tanda kasih, Anda dapat memberi melalui:</p>
-          <div id="gift-list" class="gift-list anim" style="--d:.65s"></div>
-        </div>
-      </section>
-    </div>
-
-    <!-- 8. PENUTUP -->
-    <div class="scene scene-closing">
-      <section class="panel slide-closing">
-        <div class="slide-decor">Forever</div>
-        <div class="slide-inner">
-          <svg class="monogram-svg anim" style="--d:.2s" viewBox="0 0 120 120" aria-hidden="true">
-            <circle class="mono-ring-outer" cx="60" cy="60" r="56" fill="none" stroke="#d4af37" stroke-width="1"/>
-            <circle class="mono-ring-inner" cx="60" cy="60" r="49" fill="none" stroke="rgba(212,175,55,0.35)" stroke-width="1"/>
-            <text class="mono-text" x="60" y="60" text-anchor="middle" dominant-baseline="central">I<tspan class="mono-amp" dy="2"> &amp; </tspan>S</text>
-          </svg>
-          <p id="closing-text" class="section-intro anim" style="--d:.4s"></p>
-          <p class="eyebrow anim" style="--d:.6s">Tuhan Memberkati</p>
-          <p class="closing-sign anim" style="--d:.75s">Kami yang berbahagia,</p>
-          <h2 class="script-name anim" style="--d:.9s">Ivan <span class="amp">&amp;</span> Sioni</h2>
-          <div class="gold-divider anim" style="--d:1.05s"></div>
-          <p class="credit anim" style="--d:1.2s">Made with 🤍 · 2026</p>
-        </div>
-      </section>
-    </div>
+    <!-- 9. PENUTUP -->
+    <section class="panel panel-closing texture">
+      <div class="arch-photo big rv">
+        <svg class="ph-art" viewBox="60 150 360 480" preserveAspectRatio="xMidYMid slice"><use href="#muralArt"/></svg>
+        <img id="closing-photo" alt="" hidden />
+      </div>
+      <p id="closing-text" class="section-intro rv"></p>
+      <p class="eyebrow rv">Tuhan Memberkati</p>
+      <p class="closing-sign rv">Kami yang berbahagia,</p>
+      <h2 class="script closing-names rv">Ivan <span class="amp">&amp;</span> Sioni</h2>
+      <img class="closing-mono rv" src="assets/img/monogram.png?v=2" alt="" aria-hidden="true" />
+      <p class="credit rv">Made with love · 2026</p>
+    </section>
 
   </main>
 
-  <!-- Navigasi titik -->
-  <nav id="dots" class="dots" aria-label="Navigasi bagian"></nav>
+  <!-- Kupu-kupu berhamburan saat undangan dibuka -->
+  <div class="bf-burst" aria-hidden="true">
+    <img class="burst-bf bb1" src="assets/img/mural/butterfly-1.png" alt="" />
+    <img class="burst-bf bb2" src="assets/img/mural/butterfly-2.png" alt="" />
+    <img class="burst-bf bb3" src="assets/img/mural/butterfly-1.png" alt="" />
+    <img class="burst-bf bb4" src="assets/img/mural/butterfly-2.png" alt="" />
+    <img class="burst-bf bb5" src="assets/img/mural/butterfly-1.png" alt="" />
+  </div>
+
+  <!-- Kupu-kupu melayang -->
+  <div class="drift" aria-hidden="true">
+    <img class="drift-bf drift-bf-1" src="assets/img/mural/butterfly-2.png" alt="" />
+    <img class="drift-bf drift-bf-2" src="assets/img/mural/butterfly-1.png" alt="" />
+  </div>
 
   <!-- Toast -->
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/SplitText.min.js"></script>
-  <script src="js/config.js"></script>
-  <script src="js/animations.js"></script>
-  <script src="js/main.js"></script>
-  <script src="js/delight.js"></script>
+  <script src="js/config.js?v=fresco35"></script>
+  <script src="js/main.js?v=fresco35"></script>
 </body>
 </html>

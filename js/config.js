@@ -1,7 +1,8 @@
 // ============================================================
-//  KONFIGURASI UNDANGAN
-//  Semua data acara ada di file ini. Ganti nilai yang
-//  bertanda GANTI_INI, lalu simpan — tidak perlu edit file lain.
+//  KONFIGURASI UNDANGAN — versi "Garden Fresco" (preview)
+//  Semua data & foto diatur dari file ini.
+//  Foto: isi path-nya (contoh "assets/img/prewed-1.jpg?v=2"),
+//  atau biarkan "" untuk memakai ilustrasi bawaan.
 // ============================================================
 
 window.WEDDING_CONFIG = {
@@ -10,24 +11,47 @@ window.WEDDING_CONFIG = {
       nick: "Ivan",
       full: "Ivan Rusli",
       parents: "Putra dari Bapak Lie Sje Foek & Ibu Irene Khoe",
-      instagram: "", // contoh: "ivanrusli" (tanpa @). Kosongkan jika tidak ingin ditampilkan.
-      photo: "assets/img/groom.svg",
+      instagram: "", // contoh: "ivanrusli" (tanpa @)
+      photo: "assets/img/groom.jpg?v=19", // foto potret ("" = ilustrasi bawaan)
     },
     bride: {
       nick: "Sioni",
       full: "Sara Sioni Santoso",
       parents: "Putri dari Bapak Sie Djing San & Ibu Njoo Eng Lian",
       instagram: "",
-      photo: "assets/img/bride.svg",
+      photo: "assets/img/bride.jpg?v=16",
     },
   },
 
+  // Foto sampul (layar pembuka). "" = mural ilustrasi.
+  coverPhoto: "assets/img/cover.jpg?v=2",
+  // "light" = foto sampul terang (teks jadi hijau tinta),
+  // "dark" = foto gelap (teks putih + veil gelap).
+  coverPhotoTone: "light",
+
+  // Foto bingkai lengkung di bagian penutup. "" = ikut coverPhoto/mural.
+  closingPhoto: "assets/img/closing.jpg?v=2",
+
+  // Kisah cinta — sunting bebas; hapus item jika tidak ingin ditampilkan.
+  loveStory: [
+    {
+      title: "Awal Bertemu",
+      text: "Tuhan mempertemukan kami dengan cara yang sederhana, namun sejak saat itu semuanya perlahan berubah.",
+    },
+    {
+      title: "Bertumbuh Bersama",
+      text: "Dalam suka dan duka kami belajar saling mengenal, saling menguatkan, dan bertumbuh di dalam kasih-Nya.",
+    },
+    {
+      title: "Menjadi Satu",
+      text: "Kini, dengan penuh syukur, kami melangkah ke babak baru — menjadi satu di hadapan Tuhan dan keluarga.",
+    },
+  ],
+
   event: {
-    // Tanggal utama acara (dipakai untuk countdown & Save the Date).
-    // Format: "YYYY-MM-DDTHH:mm:ss+07:00" (WIB = +07:00)
+    // Tanggal utama acara (countdown & Save the Date).
     mainDateISO: "2026-10-03T09:00:00+07:00",
 
-    // "akad" = acara pertama (Holy Matrimony), "resepsi" = acara kedua.
     akad: {
       title: "Holy Matrimony",
       dateLabel: "Sabtu, 3 Oktober 2026",
@@ -47,51 +71,37 @@ window.WEDDING_CONFIG = {
       mapsUrl: "https://maps.app.goo.gl/NZdKFmt1VzuZAKi99",
     },
 
-    // Untuk tombol "Save the Date" (Google Calendar)
     calendar: {
-      title: "Pernikahan Ivan & Sioni",
+      title: "The Wedding of Ivan & Sioni",
       details: "Kami menantikan kehadiran Anda di hari bahagia kami.",
       location:
         "Wahid Prime Hotel Ballroom B, Jl. Jend. Sudirman No.95, Salatiga",
-      // Jam mulai mengikuti mainDateISO; durasi dalam jam:
       durationHours: 6,
     },
   },
 
-  // Amplop digital — bisa lebih dari satu rekening / e-wallet
   gifts: [
-    {
-      bank: "BCA",
-      number: "0810889161",
-      holder: "Sara Sioni Santoso",
-    },
-    {
-      bank: "BCA",
-      number: "7370264435",
-      holder: "Ivan Rusli",
-    },
+    { bank: "BCA", number: "0810889161", holder: "Sara Sioni Santoso" },
   ],
 
-  // Galeri foto — ganti dengan path foto pre-wedding kalian,
-  // contoh: "assets/img/prewed-1.jpg"
+  // Galeri — isi path foto; "" akan memakai ilustrasi bawaan.
+  // Baris pertama & terakhir tampil lebar penuh, sisanya dua kolom.
   gallery: [
-    "assets/img/placeholder.svg",
-    "assets/img/placeholder.svg",
-    "assets/img/placeholder.svg",
-    "assets/img/placeholder.svg",
-    "assets/img/placeholder.svg",
-    "assets/img/placeholder.svg",
+    "assets/img/gallery-1.jpg?v=2",
+    "assets/img/gallery-2.jpg?v=3",
+    "assets/img/gallery-3.jpg?v=2",
+    "assets/img/gallery-4.jpg?v=2",
+    "assets/img/gallery-5.jpg?v=2",
+    "assets/img/gallery-6.jpg?v=2",
   ],
 
-  // File musik latar. Taruh file mp3 di assets/audio/ lalu sesuaikan nama.
   musicSrc: "assets/audio/music.mp3",
+  // Mulai musik dari detik ke-berapa (loop juga kembali ke titik ini)
+  musicStartAt: 30,
 
-  // URL Web App Google Apps Script untuk RSVP & ucapan.
-  // Kosongkan dulu; isi setelah setup (lihat README.md bagian "Setup RSVP").
   appsScriptUrl:
     "https://script.google.com/macros/s/AKfycbzkQVshxLqWLdxb7A_Nu7HPDt4DAW0htnmfuKA1okQ6bwrxcOleXI5oxUmTgcKwylD3/exec",
 
-  // Kutipan pembuka & penutup
   quote: {
     text: "Karena itu, apa yang telah dipersatukan Allah, tidak boleh diceraikan manusia.",
     source: "Markus 10:9",
