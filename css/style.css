@@ -327,10 +327,11 @@ button { font: inherit; cursor: pointer; }
   text-shadow: 0 1px 14px rgba(246, 241, 227, .9);
 }
 .arch-photo.big {
-  width: min(19rem, 82vw);
+  width: min(24rem, 92vw);
+  height: auto;
   border: 5px solid var(--ink);
   border-radius: var(--arch-r) var(--arch-r) 18px 18px;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 3 / 4.2;
   margin-bottom: 1.8rem;
 }
 .arch-photo.big .ph-art { border-radius: inherit; }
