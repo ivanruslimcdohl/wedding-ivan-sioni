@@ -10,14 +10,14 @@ window.WEDDING_CONFIG = {
     groom: {
       nick: "Ivan",
       full: "Ivan Rusli",
-      parents: "Putra Tunggal dari\nTn. Lie Sje Foek (Rusli Yusuf) & Ny. Irene Khoe",
+      parents: "Putra Tunggal dari\nTn. Lie Sje Foek (Rusli Yusuf)\n& Ny. Irene Khoe",
       instagram: "", // contoh: "ivanrusli" (tanpa @)
       photo: "assets/img/groom.jpg?v=20", // foto potret ("" = ilustrasi bawaan)
     },
     bride: {
       nick: "Sioni",
       full: "Sara Sioni Santoso",
-      parents: "Putri Pertama dari\nTn. Sie Djing San (Paulus Santo Santoso) & Ny. Njoo Eng Lian (Ester Sri Lestari)",
+      parents: "Putri Pertama dari\nTn. Sie Djing San (Paulus Santo Santoso)\n& Ny. Njoo Eng Lian (Ester Sri Lestari)",
       instagram: "",
       photo: "assets/img/bride.jpg?v=16",
     },
