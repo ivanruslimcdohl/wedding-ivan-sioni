@@ -55,7 +55,7 @@ window.WEDDING_CONFIG = {
     akad: {
       title: "Holy Matrimony",
       dateLabel: "Sabtu, 3 Oktober 2026",
-      timeLabel: "09.00 – 11.00 WIB",
+      timeLabel: "09.00 – 10.30 WIB",
       venue: "Wahid Prime Hotel — Ballroom B",
       address:
         "Jl. Jend. Sudirman No.95, Kutowinangun Kidul, Kec. Tingkir, Kota Salatiga, Jawa Tengah 50742",
