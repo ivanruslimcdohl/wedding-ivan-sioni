@@ -212,6 +212,9 @@
     if (name) {
       name = name.slice(0, 60);
       $("guest-name").textContent = name;
+      // Ada nama spesifik → sapaan generik "Bapak/Ibu/Saudara/i" tak perlu
+      var toLabel = $("to-label");
+      if (toLabel) toLabel.textContent = "Kepada Yth.";
       // Soft default: isi otomatis nama di form RSVP (tetap bisa diubah tamu)
       var rsvpName = $("rsvp-name");
       if (rsvpName && !rsvpName.value) rsvpName.value = name;
