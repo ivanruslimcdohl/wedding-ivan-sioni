@@ -73,7 +73,7 @@ window.WEDDING_CONFIG = {
 
     calendar: {
       title: "The Wedding of Ivan & Sioni",
-      details: "Kami menantikan kehadiran Anda di hari bahagia kami.",
+      details: "Kami menantikan kehadiran Bapak/Ibu/Saudara/i di hari bahagia kami.",
       location:
         "Wahid Prime Hotel Ballroom B, Jl. Jend. Sudirman No.95, Salatiga",
       durationHours: 6,
